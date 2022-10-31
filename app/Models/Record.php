@@ -10,6 +10,6 @@ class Record extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id', 'lat', 'lng', 'status', 'clock_time', 'clock_type'
+        'user_id', 'lat', 'lng', 'date', 'clock_in', 'clock_out', 'status',
     ];
 }

@@ -17,9 +17,11 @@ class AdminController extends Controller
                 ->orderBy('name')
                 ->get();
         } else {
-            $users = User::where('role', 'ADMIN')
-                ->orWhere('role', 'OPERATOR')
-                ->where('school_id', $user->school_id)
+            $users = User::where('school_id', $user->school_id)
+                ->where(function ($q) {
+                    $q->where('role', 'ADMIN')
+                    ->orWhere('role', 'OPERATOR');
+                })
                 ->orderBy('name')
                 ->get();
         }
