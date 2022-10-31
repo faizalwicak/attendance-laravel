@@ -37,14 +37,14 @@
                 @if(auth()->user()->role == 'SUPERADMIN')
                 <li>
                     <a href="/school">
-                        <i class="bx bx-calendar-event icon nav-icon"></i>
-                        <span class="menu-item" data-key="t-calendar">Sekolah</span>
+                        <i class="bx bxs-school icon nav-icon"></i>
+                        <span class="menu-item" data-key="t-school">Sekolah</span>
                     </a>
                 </li>
                 
                 <li>
                     <a href="/admin">
-                        <i class="bx bx-calendar-event icon nav-icon"></i>
+                        <i class="bx bxs-group icon nav-icon"></i>
                         <span class="menu-item" data-key="t-calendar">Admin</span>
                     </a>
                 </li>
@@ -52,14 +52,26 @@
 
                 @if(auth()->user()->role == 'ADMIN')
                 <li>
+                    <a href="/home">
+                        <i class="bx bxs-home icon nav-icon"></i>
+                        <span class="menu-item" data-key="t-calendar">Beranda</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/me/school">
+                        <i class="bx bxs-school icon nav-icon"></i>
+                        <span class="menu-item" data-key="t-calendar">Sekolah</span>
+                    </a>
+                </li>
+                <li>
                     <a href="/grade">
-                        <i class="bx bx-calendar-event icon nav-icon"></i>
+                        <i class="bx bxs-buildings icon nav-icon"></i>
                         <span class="menu-item" data-key="t-calendar">Kelas</span>
                     </a>
                 </li>
                 <li>
                     <a href="/student">
-                        <i class="bx bx-calendar-event icon nav-icon"></i>
+                        <i class="bx bxs-graduation nav-icon"></i>
                         <span class="menu-item" data-key="t-calendar">Siswa</span>
                     </a>
                 </li>

@@ -30,6 +30,7 @@ new gridjs.Grid({
         },
         {
             name: 'Tingkatan',
+            width: '100px',
             formatter: (function (cell) {
                 return 'Kelas ' + cell
             })

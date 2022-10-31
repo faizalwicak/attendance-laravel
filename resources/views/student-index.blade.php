@@ -27,12 +27,14 @@ new gridjs.Grid({
         },
         {
             name: 'Username',
+            width: '100px',
         },
         {
             name: 'Nama',
         },
         {
             name: 'Kelas',
+            width: '200px',
         },
         {
             name: "Action",

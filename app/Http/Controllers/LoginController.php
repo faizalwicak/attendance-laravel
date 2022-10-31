@@ -33,6 +33,9 @@ class LoginController extends Controller
 
         if ($user && Hash::check($validateData['password'], $user->password) && in_array($user->role, ['SUPERADMIN', 'ADMIN'])) {
             Auth::login($user);
+            if ($user-> role == 'SUPERADMIN') {
+                return redirect('/school');
+            }
             return redirect('home');
         } 
 

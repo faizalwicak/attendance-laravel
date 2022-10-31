@@ -29,6 +29,10 @@ new gridjs.Grid({
             name: 'Nama',
         },
         {
+            name: 'Sekolah',
+            width: '200px',
+        },
+        {
             name: "Action",
             sort: false,
             width: '50px',
@@ -54,7 +58,7 @@ new gridjs.Grid({
   search: true,
   data: [
     @foreach($users as $user)
-    ["", "{{ $user->name }}", "{{ $user->id }}"],
+    ["", "{{ $user->name }}", "{{ $user->school->name }}", "{{ $user->id }}"],
     @endforeach
   ]
 }).render(document.getElementById("table-data"));

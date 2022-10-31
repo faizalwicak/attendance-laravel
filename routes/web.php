@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\SchoolController;
@@ -22,6 +23,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     if (Auth::check()) {
+        if (Auth::user()->role == 'SUPERADMIN') {
+            return redirect('/school');
+        }
         return redirect('/home');
     }
     return redirect('/login');
@@ -56,5 +60,12 @@ Route::group(['middleware' => ['auth']], function () {
         Route::put('/student/{id}', [StudentController::class, 'update']);
         Route::delete('/student/{id}', [StudentController::class, 'destroy']);
     });
-        
+
+    Route::get('/me/profile', [ProfileController::class, 'updateProfilePage']);
+    Route::post('/me/profile', [ProfileController::class, 'updateProfileAction']);
+    Route::get('/me/password', [ProfileController::class, 'changePasswordPage']);
+    Route::post('/me/password', [ProfileController::class, 'changePasswordAction']);
+    Route::get('/me/school', [SchoolController::class, 'updateSchoolPage']);
+    Route::post('/me/school', [SchoolController::class, 'updateSchoolAction']);
+
 });
