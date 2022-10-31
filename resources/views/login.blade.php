@@ -62,9 +62,9 @@
                                         </div>
                 
                                         <div class="mb-3">
-                                            <div class="float-end">
+                                            {{-- <div class="float-end">
                                                 <a href="auth-recoverpw.html" class="text-muted text-decoration-underline">Forgot password?</a>
-                                            </div>
+                                            </div> --}}
                                             <label class="form-label" for="password-input">Password</label>
                                             <div class="position-relative auth-pass-inputgroup input-custom-icon">
                                                 <span class="bx bx-lock-alt"></span>

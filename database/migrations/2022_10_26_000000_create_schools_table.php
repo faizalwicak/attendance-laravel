@@ -16,9 +16,9 @@ return new class extends Migration
         Schema::create('schools', function (Blueprint $table) {
             $table->id();
             $table->string('name', 100);
-            $table->double('lat');
-            $table->double('lng');
-            $table->double('distance');
+            $table->decimal('lat', 9, 6);
+            $table->decimal('lng', 9, 6);
+            $table->integer('distance');
             $table->time('clock_in');
             $table->time('clock_out');
             $table->timestamps();

@@ -54,11 +54,21 @@
     }
 
     map.on('click', function(e) {
-        document.getElementById('input-lat').value = e.latlng['lat'].toFixed(5);
-        document.getElementById('input-lng').value = e.latlng['lng'].toFixed(5);
+        var latitude = e.latlng['lat'];
+        var longitude = e.latlng['lng'];
+        if (longitude < -180) {
+            longitude += 360;
+        }
+        if (longitude > 180) {
+            longitude -=360;
+        }
+
+
+        document.getElementById('input-lat').value = latitude.toFixed(6);
+        document.getElementById('input-lng').value = longitude.toFixed(6);
 
         if (circle == null) {
-            circle = L.circle([51.508, -0.11], {
+            circle = L.circle(e.latlng, {
                 color: '#28b765',
                 fillColor: '#28b765',
                 fillOpacity: 0.5,
@@ -126,13 +136,13 @@
                 <div class="col-lg-4">
                     <div class="mb-3">
                         <label for="input-lat" class="form-label">Latitude</label>
-                        <input name="lat" value="{{ old('lat', $school ? $school->lat : '') }}" type="number" step="0.001" class="form-control" id="input-lat" readonly>
+                        <input name="lat" value="{{ old('lat', $school ? $school->lat : '') }}" type="number" step="0.000001" class="form-control" id="input-lat" readonly>
                     </div>
                 </div>
                 <div class="col-lg-4">
                     <div class="mb-3">
                         <label for="input-lng" class="form-label">Longitude</label>
-                        <input name="lng" value="{{ old('lng', $school ? $school->lng : '') }}" type="number" step="0.001" class="form-control" id="input-lng" readonly>
+                        <input name="lng" value="{{ old('lng', $school ? $school->lng : '') }}" type="number" step="0.000001" class="form-control" id="input-lng" readonly>
                     </div>
                 </div>
                 
