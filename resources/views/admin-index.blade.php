@@ -28,10 +28,17 @@ new gridjs.Grid({
         {
             name: 'Nama',
         },
+        @if (auth()->user()->role == 'SUPERADMIN')
         {
             name: 'Sekolah',
             width: '200px',
-        },
+        },            
+        @else
+        {
+            name: 'ROLE',
+            width: '200px',
+        },  
+        @endif
         {
             name: "Action",
             sort: false,
@@ -58,7 +65,7 @@ new gridjs.Grid({
   search: true,
   data: [
     @foreach($users as $user)
-    ["", "{{ $user->name }}", "{{ $user->school->name }}", "{{ $user->id }}"],
+    ["", "{{ $user->name }}", "{{ auth()->user()->role == 'SUPERADMIN' ? $user->school->name : $user->role }}", "{{ $user->id }}"],
     @endforeach
   ]
 }).render(document.getElementById("table-data"));

@@ -10,8 +10,19 @@ use Barryvdh\Debugbar\Facades\Debugbar;
 
 class AdminController extends Controller
 {
-    public function index() {
-        $users = User::where('role', 'ADMIN')->orderBy('name')->get();
+    public function index(Request $request) {
+        $user = $request->user();
+        if ($user->role == 'SUPERADMIN') {
+            $users = User::where('role', 'ADMIN')
+                ->orderBy('name')
+                ->get();
+        } else {
+            $users = User::where('role', 'ADMIN')
+                ->orWhere('role', 'OPERATOR')
+                ->where('school_id', $user->school_id)
+                ->orderBy('name')
+                ->get();
+        }
         return view('admin-index', ['title' => 'Daftar Admin', 'users' => $users]);
     }
 
@@ -21,14 +32,14 @@ class AdminController extends Controller
     }
 
     public function store(Request $request) {
-        $validateData = $request->validate([
+        $validateRole = [
             'username' => 'required|max:100|unique:users,username',
             'name' => 'required|max:100',
             'email' => 'required|email|unique:users,email',
-            'school_id' => 'required|exists:schools,id',
             'password' => 'required|min:6',
             're-password' => 'required|same:password',
-        ], [
+        ];
+        $validateMessage = [
             'username.required' => 'Username tidak boleh kosong.',
             'username.max' => 'Username maksimal 100 karakter.',
             'username.unique' => 'Username telah terpakai.',
@@ -43,12 +54,30 @@ class AdminController extends Controller
             'password.min' => 'Password minimal 6 karakter.',
             're-password.required' => 'Konfirmasi password tidak boleh kosong.',
             're-password.same' => 'Konfirmasi password tidak sama.',
-        ]);
+        ];
+
+        $user = $request->user();
+        if ($user->role == 'SUPERADMIN') {
+            $validateRole['school_id'] = 'required|exists:schools,id';
+            $validateMessage['school_id.required'] = 'Sekolah tidak boleh kosong.';
+            $validateMessage['school_id.exists'] = 'Sekolah tidak ditemukan.';
+        } else {
+            $validateRole['role'] = 'required|in:ADMIN,OPERATOR';
+            $validateMessage['role.required'] = 'Role tidak boleh kosong.';
+            $validateMessage['role.in'] = 'Role tidak valid.';
+        }
+
+        $validateData = $request->validate($validateRole, $validateMessage);
 
         $validateData['username'] = preg_replace('/\s*/', '', $validateData['username']);
         $validateData['username'] = strtolower($validateData['username']);
 
-        $validateData['role'] = 'ADMIN';
+        if ($user->role == 'SUPERADMIN') {
+            $validateData['role'] = 'ADMIN';
+        } else {
+            $validateData['school_id'] = $user->school_id;
+        }
+
         $validateData['password'] = Hash::make($validateData['password']);
 
         User::create($validateData);
@@ -57,41 +86,65 @@ class AdminController extends Controller
             ->with('success','Admin berhasil dibuat.');
     }
 
-    public function edit($id) {
-        $user = User::findOrFail($id);
-        $schools = School::orderBy('name')->get();
-        if ($user->role != 'ADMIN') {
-            return abort(403);
+    public function edit(Request $request, $id) {
+        if ($request->user()->role == 'SUPERUSER') {
+            $user = User::findOrFail($id);
+            if (!in_array($user->role, ['ADMIN'])) {
+                return abort(403);
+            }
+        } else {
+            $user = User::findOrFail($id);
+            if (!in_array($user->role, ['ADMIN', 'OPERATOR']) || $user->school_id != $request->user()->school_id) {
+                return abort(403);
+            }
         }
+        
+        $schools = School::orderBy('name')->get();
+        
         return view('admin-form', ['title' => 'Edit "'.$user->name.'"', 'user' => $user, 'schools' => $schools]);
     }
 
     public function update(Request $request, $id) {
         $user = User::findOrFail($id);
-        if ($user->role != 'ADMIN') {
-            return abort(403);
-        }
-        $validateData = $request->validate([
+
+        $validateRole = [
             'username' => 'required|max:100|unique:users,username,'.$user->id,
             'name' => 'required|max:100',
             'email' => 'required|email|unique:users,email,'.$user->id,
-            'school_id' => 'required|exists:schools,id',
             'password' => 'nullable|min:6',
             're-password' => 'same:password',
-        ], [
+        ];
+        $validateMessage = [
             'username.required' => 'Username tidak boleh kosong.',
             'username.max' => 'Username maksimal 100 karakter.',
             'username.unique' => 'Username telah terpakai.',
             'name.required' => 'Nama tidak boleh kosong.',
             'name.max' => 'Nama maksimal 100 karakter.',
-            'school_id.required' => 'Sekolah tidak boleh kosong.',
-            'school_id.exists' => 'Sekolah tidak ditemukan.',
+            
             'email.required' => 'Email tidak boleh kosong.',
             'email.email' => 'Email tidak valid.',
             'email.unique' => 'Email telah terpakai.',
             'password.min' => 'Password minimal 6 karakter.',
             're-password.same' => 'Konfirmasi password tidak sama.',
-        ]);
+        ];
+
+        if ($request->user()->role == 'SUPERUSER') {
+            if (!in_array($user->role, ['ADMIN'])) {
+                return abort(403);
+            }
+            $validateRole['school_id'] = 'required|exists:schools,id';
+            $validateMessage['school_id.required'] = 'Sekolah tidak boleh kosong.';
+            $validateMessage['school_id.exists'] = 'Sekolah tidak ditemukan.';
+        } else {
+            if (!in_array($user->role, ['ADMIN', 'OPERATOR']) || $user->school_id != $request->user()->school_id) {
+                return abort(403);
+            }
+            $validateRole['role'] = 'required|in:ADMIN,OPERATOR';
+            $validateMessage['role.required'] = 'Role tidak boleh kosong.';
+            $validateMessage['role.in'] = 'Role tidak valid.';
+        }
+
+        $validateData = $request->validate($validateRole, $validateMessage);
 
         $validateData['username'] = preg_replace('/\s*/', '', $validateData['username']);
         $validateData['username'] = strtolower($validateData['username']);
@@ -108,11 +161,17 @@ class AdminController extends Controller
             ->with('success','Admin berhasil disimpan.');
     }
 
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {   
         $user = User::findOrFail($id);
-        if ($user->role != 'ADMIN') {
-            return abort(403);
+        if ($request->user()->role == 'SUPERUSER') {
+            if (!in_array($user->role, ['ADMIN'])) {
+                return abort(403);
+            }
+        } else {
+            if (!in_array($user->role, ['ADMIN', 'OPERATOR']) || $user->school_id != $request->user()->school_id) {
+                return abort(403);
+            }
         }
         $user->delete();
        

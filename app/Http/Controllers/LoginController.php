@@ -31,7 +31,7 @@ class LoginController extends Controller
 
         $user = User::where('username', $validateData['username'])->first();
 
-        if ($user && Hash::check($validateData['password'], $user->password) && in_array($user->role, ['SUPERADMIN', 'ADMIN'])) {
+        if ($user && Hash::check($validateData['password'], $user->password) && in_array($user->role, ['SUPERADMIN', 'ADMIN', 'OPERATOR'])) {
             Auth::login($user);
             if ($user-> role == 'SUPERADMIN') {
                 return redirect('/school');

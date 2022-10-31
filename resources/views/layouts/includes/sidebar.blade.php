@@ -63,6 +63,14 @@
                         <span class="menu-item" data-key="t-calendar">Sekolah</span>
                     </a>
                 </li>
+
+                <li>
+                    <a href="/admin">
+                        <i class="bx bxs-group icon nav-icon"></i>
+                        <span class="menu-item" data-key="t-calendar">Admin</span>
+                    </a>
+                </li>
+                
                 <li>
                     <a href="/grade">
                         <i class="bx bxs-buildings icon nav-icon"></i>

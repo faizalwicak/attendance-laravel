@@ -41,7 +41,9 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::group(['middleware' => ['role:SUPERADMIN']], function () {
         Route::resource('/school', SchoolController::class);
+    });
 
+    Route::group(['middleware' => ['role:SUPERADMIN,ADMIN']], function () {
         Route::get('/admin', [AdminController::class, 'index']);
         Route::get('/admin/create', [AdminController::class, 'create']);
         Route::post('/admin', [AdminController::class, 'store']);

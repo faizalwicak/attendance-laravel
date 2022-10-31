@@ -39,15 +39,26 @@
                 <input name="email" type="email" class="form-control" id="input-email" value="{{ old('email', $user ? $user->email : '') }}" required>
             </div>
 
+            @if (auth()->user()->role == 'SUPERADMIN')
             <div class="mb-3">
-                <label for="input-email" class="form-label">Sekolah</label>
-                <select name="school_id" class="form-select" required>
+                <label for="input-school" class="form-label">Sekolah</label>
+                <select id="input-school" name="school_id" class="form-select" required>
                     <option value="">-- pilih sekolah --</option>
                     @foreach($schools as $school)
                     <option value="{{ $school->id }}" {{ old('school_id', $user ? $user->school_id : '') == ''.$school->id ? 'selected' : '' }}>{{ $school->name }}</option>
                     @endforeach
                 </select>    
+            </div>                
+            @else
+            <div class="mb-3">
+                <label for="input-role" class="form-label">Role</label>
+                <select id="input-role" name="role" class="form-select" required>
+                    <option value="">-- pilih role --</option>
+                    <option value="ADMIN" {{ old('role', $user ? $user->role : '' ) == 'ADMIN' ? 'selected' : '' }}>ADMIN</option>
+                    <option value="OPERATOR" {{ old('role', $user ? $user->role : '' ) == 'OPERATOR' ? 'selected' : '' }}>OPERATOR</option>
+                </select>    
             </div>
+            @endif
 
             <div class="mb-3">
                 <label for="input-password" class="form-label">Password</label>
