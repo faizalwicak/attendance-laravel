@@ -4,7 +4,7 @@
     <head>
 
         <meta charset="utf-8" />
-        <title>Login | webadmin - Admin & Dashboard Template</title>
+        <title>Login | Attendance System</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta content="Premium Multipurpose Admin & Dashboard Template" name="description" />
         <meta content="Themesdesign" name="author" />
@@ -49,8 +49,15 @@
                                     <form action="{{ route('login') }}" method="post">
                                         @if(session('error'))
                                         <div class="alert alert-danger alert-border-left alert-dismissible fade show" role="alert">
-                                            <string>{{session('error')}}
+                                            {{session('error')}}
                                         </div>
+                                        @endif
+                                        @if ($errors->any())
+                                            @foreach ($errors->all() as $error)
+                                                <div class="alert alert-danger alert-border-left alert-dismissible fade show" role="alert">
+                                                    {{ $error }}
+                                                </div>
+                                            @endforeach
                                         @endif
                                         @csrf
                                         <div class="mb-3">

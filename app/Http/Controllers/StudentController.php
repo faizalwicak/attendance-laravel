@@ -12,15 +12,49 @@ use Illuminate\Support\Facades\Hash;
 class StudentController extends Controller
 {
     public function index() {
+        $grade = Grade::where('school_id', auth()->user()->school_id)
+            ->orderBy('name')
+            ->first();
+
+        if (!$grade) {
+            return redirect('/grade');
+        }
+
+        return redirect('/grade/'.$grade->id.'/student');
+    }
+
+    public function indexGrade($grade_id) {
+
+        $grade = Grade::where('id', $grade_id)
+            ->where('school_id', auth()->user()->school_id)
+            ->orderBy('name')
+            ->first();
+        
+        if (!$grade) {
+            return abort(403);
+        }
+
         $users = User::where('role', 'USER')
-            ->where('school_id', Auth::user()->school_id)
+            ->where('school_id', auth()->user()->school_id)
+            ->where('grade_id', $grade_id)
             ->orderBy('username')
             ->get();
-        return view('student-index', ['title' => 'Daftar Siswa', 'users' => $users]);
+        
+        $grades = Grade::where('school_id', auth()->user()->school_id)
+            ->orderBy('name')
+            ->get();
+
+        if (count($grades) == 0) {
+            return redirect('/grade');
+        }
+
+        return view('student-index', ['title' => 'Daftar Siswa', 'users' => $users, 'grades' => $grades, 'selectedGrade' => $grade_id]);
     }
 
     public function create() {
-        $grades = Grade::orderBy('name')->get();
+        $grades = Grade::where('school_id', auth()->user()->school_id)
+            ->orderBy('name')
+            ->get();
         return view('student-form', ['title' => 'Tambah Siswa', 'user' => null, 'grades' => $grades]);
     }
 
@@ -31,6 +65,7 @@ class StudentController extends Controller
             'grade_id' => 'required|exists:grades,id',
             'password' => 'required|min:6',
             're-password' => 'required|same:password',
+            'gender' => 'required|in:MALE,FEMALE'
         ], [
             'username.required' => 'Username tidak boleh kosong.',
             'username.max' => 'Username maksimal 100 karakter.',
@@ -43,6 +78,8 @@ class StudentController extends Controller
             'password.min' => 'Password minimal 6 karakter.',
             're-password.required' => 'Konfirmasi password tidak boleh kosong.',
             're-password.same' => 'Konfirmasi password tidak sama.',
+            'gender.required' => 'Jenis Kelamin tidak boleh kosong.',
+            'gender.in' => 'Jenis Kelamin tidak valid.',
         ]);
 
         $validateData['username'] = preg_replace('/\s*/', '', $validateData['username']);
@@ -55,7 +92,7 @@ class StudentController extends Controller
 
         User::create($validateData);
 
-        return redirect('/student')
+        return redirect('/grade/'.$validateData['grade_id'].'/student')
             ->with('success','Siswa berhasil dibuat.');
     }
 
@@ -65,7 +102,9 @@ class StudentController extends Controller
             return abort(403);
         }
 
-        $grades = Grade::orderBy('name')->get();
+        $grades = Grade::where('school_id', auth()->user()->school_id)
+            ->orderBy('name')
+            ->get();
         
         return view('student-form', ['title' => 'Edit "'.$user->name.'"', 'user' => $user, 'grades' => $grades]);
     }
@@ -81,6 +120,7 @@ class StudentController extends Controller
             'grade_id' => 'required|exists:grades,id',
             'password' => 'nullable|min:6',
             're-password' => 'same:password',
+            'gender' => 'required|in:MALE,FEMALE'
         ], [
             'username.required' => 'Username tidak boleh kosong.',
             'username.max' => 'Username maksimal 100 karakter.',
@@ -93,6 +133,9 @@ class StudentController extends Controller
             'password.min' => 'Password minimal 6 karakter.',
             're-password.required' => 'Konfirmasi password tidak boleh kosong.',
             're-password.same' => 'Konfirmasi password tidak sama.',
+            'gender.required' => 'Jenis Kelamin tidak boleh kosong.',
+            'gender.in' => 'Jenis Kelamin tidak valid.',
+
         ]);
 
         $validateData['username'] = preg_replace('/\s*/', '', $validateData['username']);
@@ -106,7 +149,7 @@ class StudentController extends Controller
 
         $user->update($validateData);
 
-        return redirect('/student')
+        return redirect('/grade/'.$validateData['grade_id'].'/student')
             ->with('success','Siswa berhasil disimpan.');
     }
 
@@ -118,7 +161,7 @@ class StudentController extends Controller
         }
         $user->delete();
        
-        return redirect('/student')
+        return redirect('/grade/'.$$user->grade_id.'/student')
             ->with('success','Siswa berhasil dihapus.');
     }
 }

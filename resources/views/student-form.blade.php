@@ -35,6 +35,15 @@
             </div>
 
             <div class="mb-3">
+                <label for="input-email" class="form-label">Jenis Kelamin</label>
+                <select name="gender" class="form-select" required>
+                    <option value="">-- pilih --</option>
+                    <option value="MALE" {{ old('gender', $user ? $user->gender : '') == 'MALE' ? 'selected' : '' }}>Laki-laki</option>
+                    <option value="FEMALE" {{ old('gender', $user ? $user->gender : '') == 'FEMALE' ? 'selected' : '' }}>Perempuan</option>
+                </select>    
+            </div>
+
+            <div class="mb-3">
                 <label for="input-email" class="form-label">Kelas</label>
                 <select name="grade_id" class="form-select" required>
                     <option value="">-- pilih kelas --</option>

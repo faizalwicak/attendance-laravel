@@ -37,11 +37,10 @@ class ClockController extends Controller
         return $angle * $earthRadius;
     }
 
-    public function clock(Request $request) {
+    public function clockIn(Request $request) {
         $data = $request->validate([
             'lat' => 'required|numeric|min:-90|max:90',
             'lng' => 'required|numeric|min:-180|max:180',
-            'type' => 'required|in:CLOCK_IN,CLOCK_OUT'
         ], [
             'lat.required' => 'Latitude tidak boleh kosong.',
             'lat.numeric' => 'Latitude tidak valid.',
@@ -51,49 +50,171 @@ class ClockController extends Controller
             'lng.numeric' => 'Longitude tidak valid.',
             'lng.min' => 'Longitude tidak valid.',
             'lng.max' => 'Longitude tidak valid.',
-            'type.required' => 'Tipe tidak boleh kosong.',
-            'type.in' => 'Tipe tidak valid.'
         ]);
-        $school = School::find(auth()->user()->school_id)->first();
         $nowDate = new DateTime();
+
+        $record = Record::where('date', $nowDate->format('Y-m-d'))
+            ->where('user_id', auth()->user()->id)
+            ->first();
+
+        if ($record && $record->clock_in_time != null) {
+            return response()->json(['message' => 'Anda sudah absen masuk.'], 422);
+        }
+
+        $school = School::find(auth()->user()->school_id)->first();
         $status = null;
         $message = "";
+        
         $distance = $this->haversineGreatCircleDistance($school->lat, $school->lng, $data['lat'], $data['lng']);
         if ($distance > $school->distance) {
             return response()->json(['message' => 'Anda berada di luar area sekolah.'], 422);
         }
 
-        if ($data['type'] == 'CLOCK_IN') {
-            $clockInTime = strtotime($school->clock_in);
-            $nowTime = strtotime($nowDate->format('H:i:s'));
-            if ($nowTime <= $clockInTime) {
-                $status = 'ON_TIME';
-                $message = "Anda masuk tepat waktu.";
-            } else {
-                $status = 'LATE';
-                $message = "Anda terlambat masuk.";
-            }
-        } 
-        else {
-            $message = "Anda berhasil presensi pulang.";
-            // $clockOutTime = strtotime($school->clock_out);
+        $clockInTime = strtotime($school->clock_in);
+        $limitTime = '05:00:00';
+        $nowTime = strtotime($nowDate->format('H:i:s'));
+
+        if ($nowTime < strtotime($limitTime)) {
+            return response()->json(['message' => 'Anda bisa absensi setelah jam '.$limitTime.'.'], 422);
         }
 
-        $createdData = [
-            'user_id' => auth()->user()->id,
-            'lat' => $data['lat'],
-            'lng' => $data['lng'],
-            'status' => $status,
-            'clock_time' => $nowDate,
-            'clock_type' => $data['type'], 
-        ];
-        $record = Record::create($createdData);
+        if ($nowTime <= $clockInTime) {
+            $status = 'ON_TIME';
+            $message = "Presensi berhasil. Anda masuk tepat waktu.";
+        } else {
+            $status = 'LATE';
+            $message = "Presensi berhasil. Anda terlambat masuk.";
+        }
+
+        if ($record) {
+            $createdData = [
+                'clock_in_time' => $nowDate->format('H:i:s'),
+                'clock_in_lat' => $data['lat'],
+                'clock_in_lng' => $data['lng'],
+                'clock_in_status' => $status,
+            ];
+            $record = $record->update($createdData);
+        } else {
+            $createdData = [
+                'user_id' => auth()->user()->id,
+                'date' => $nowDate->format('Y-m-d'),
+                'clock_in_time' => $nowDate->format('H:i:s'),
+                'clock_in_lat' => $data['lat'],
+                'clock_in_lng' => $data['lng'],
+                'clock_in_status' => $status,
+            ];
+            $record = Record::create($createdData);
+        }
 
         return response()->json([
             'message' => $message,
             'clock' => $nowDate->format('Y-m-d H:i:s'),
-            'distance' => number_format((float)$distance, 2, '.', ''),
-            'in_distance' => $distance <= $school->distance 
         ]);
     }
+
+    public function clockOut(Request $request) {
+        $data = $request->validate([
+            'lat' => 'nullable|numeric|min:-90|max:90',
+            'lng' => 'nullable|numeric|min:-180|max:180',
+        ], [
+            'lat.numeric' => 'Latitude tidak valid.',
+            'lat.min' => 'Latitude tidak valid.',
+            'lat.max' => 'Latitude tidak valid.',
+            'lng.numeric' => 'Longitude tidak valid.',
+            'lng.min' => 'Longitude tidak valid.',
+            'lng.max' => 'Longitude tidak valid.',
+        ]);
+        $nowDate = new DateTime();
+
+        $record = Record::where('date', $nowDate->format('Y-m-d'))
+            ->where('user_id', auth()->user()->id)
+            ->first();
+
+        if ($record && $record->clock_out_time != null) {
+            return response()->json(['message' => 'Anda sudah absen pulang.'], 422);
+        }
+
+        $school = School::find(auth()->user()->school_id)->first();
+        $status = null;
+        $message = "Presensi berhasil.";
+        
+        $distance = $this->haversineGreatCircleDistance($school->lat, $school->lng, $data['lat'], $data['lng']);
+        if ($distance > $school->distance) {
+            return response()->json(['message' => 'Anda berada di luar area sekolah.'], 422);
+        }
+
+        // $clockInTime = strtotime($school->clock_in);
+        $limitTime = '22:00:00';
+        $nowTime = strtotime($nowDate->format('H:i:s'));
+
+        if ($nowTime > strtotime($limitTime)) {
+            return response()->json(['message' => 'Anda bisa absensi sebelum jam '.$limitTime.'.'], 422);
+        }
+
+        if ($record) {
+            $createdData = [
+                'clock_out_time' => $nowDate->format('H:i:s'),
+                'clock_out_lat' => $data['lat'],
+                'clock_out_lng' => $data['lng'],
+            ];
+            $record = $record->update($createdData);
+        } else {
+            $createdData = [
+                'user_id' => auth()->user()->id,
+                'date' => $nowDate->format('Y-m-d'),
+                'clock_out_time' => $nowDate->format('H:i:s'),
+                'clock_out_lat' => $data['lat'],
+                'clock_out_lng' => $data['lng'],
+                'clock_out_status' => $status,
+            ];
+            $record = Record::create($createdData);
+        }
+
+        return response()->json([
+            'message' => $message,
+            'clock' => $nowDate->format('Y-m-d H:i:s'),
+        ]);
+    }
+
+    public function history(Request $request) {
+        $now = new DateTime('now');
+        $month = $now->format('m');
+        $year = $now->format('Y');
+        
+        if ($request->has('month')) {
+            $month = $request->input('month');
+        }
+        if ($request->has('year')) {
+            $year = $request->input('year');
+        }
+
+        $now->setDate($year, $month, 1);
+        $record_array = [];
+        for($i=0; $i < $now->format('t'); $i++) {
+            array_push($record_array, null);
+        }
+        
+        $records = Record::where('user_id', auth()->user()->id)
+                    ->whereMonth('date', $month)
+                    ->whereYear('date', $year)
+                    ->get();
+        
+        foreach($records as $value) {
+            $value_date = strtotime($value['date']);
+            $record_array[(int)date('d', $value_date)-1] = $value;
+        }
+
+        return response()->json($record_array);
+    }
+
+    public function clockStatus() {
+        $now = new DateTime('now');
+        
+        $records = Record::where('user_id', auth()->user()->id)
+            ->whereDate('date', '=', $now->format('Y-m-d'))            
+            ->first();
+                    
+        return response()->json($records);
+    }
+
 }

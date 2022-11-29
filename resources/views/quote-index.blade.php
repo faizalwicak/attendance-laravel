@@ -18,46 +18,28 @@ new gridjs.Grid({
   columns:
     [
         {
-            name: 'Logo',
-            sort: false,
+            name: 'Pesan',
+        },
+        {
+            name: 'Status',
             formatter: (function (cell) {
-                return gridjs.html('<img src="/assets/images/logo-dark-sm.png" alt="" class="avatar-sm rounded-circle me-2" />');
-            }),
-            width: '50px',
+                if (cell == '0') {
+                    return gridjs.html(`<span class="badge badge-pill badge-soft-danger font-size-12">Tidak Aktif</span>`);
+                }
+                return gridjs.html(`<span class="badge badge-pill badge-soft-success font-size-12">Aktif</span>`)
+            })
         },
         {
-            name: 'Username',
-        },
-        {
-            name: 'Nama',
-        },
-        @if (auth()->user()->role == 'SUPERADMIN')
-        {
-            name: 'Sekolah',
-            width: '200px',
-        },            
-        @else
-        {
-            name: 'ROLE',
-            width: '200px',
-        },  
-        @endif
-        {
-            name: "Action",
+            name: "...",
             sort: false,
             width: '100px',
             formatter: (function (cell) {
-                var access = `<a href="/admin/${cell[0]}/access" data-bs-toggle="tooltip" data-bs-placement="top" title="Akses" class="text-success">
-                    <i class="mdi mdi-key font-size-18"></i>
-                </a>`
                 return gridjs.html(`
-                    <div class="d-flex gap-3  justify-content-end">
-                        ${cell[1] == 'OPERATOR' ? access : ''}
-                        
-                        <a href="/admin/${cell[0]}/edit" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit" class="text-success">
+                    <div class="d-flex gap-3">
+                        <a href="/quote/${cell}/edit" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit" class="text-success">
                             <i class="mdi mdi-pencil font-size-18"></i>
                         </a>
-                        <form action="/admin/${cell[0]}" method="POST" onsubmit="return confirm('Apakah anda yakin? Data yang sudah dihapus tidak dapat dikembalikan!')">
+                        <form action="/quote/${cell}" method="POST" onsubmit="return confirm('Apakah anda yakin? Data yang sudah dihapus tidak dapat dikembalikan!')">
                             @csrf
                             @method('DELETE')
                             <button  data-bs-toggle="tooltip" data-bs-placement="top" title="Hapus" class="text-danger" type="submit" style="background-color: transparent; background-repeat: no-repeat; border: none; cursor: pointer; overflow: hidden; outline: none;"><i class="mdi mdi-delete font-size-18""></i></button>
@@ -66,16 +48,13 @@ new gridjs.Grid({
             })
       }
     ],
-  pagination: {
-    limit: 7
-  },
-  sort: true,
-  search: true,
-  data: [
-    @foreach($users as $user)
-    ["", "{{ $user->username }}", "{{ $user->name }}", "{{ auth()->user()->role == 'SUPERADMIN' ? $user->school->name : $user->role }}", ["{{ $user->id }}", "{{ $user->role }}"]],
-    @endforeach
-  ]
+    sort: true,
+    search: true,
+    data: [
+        @foreach($quotes as $quote)
+        ["{{ $quote->message }}", "{{ $quote->active }}", "{{ $quote->id }}"],
+        @endforeach
+    ]
 }).render(document.getElementById("table-data"));
 
 
@@ -96,7 +75,7 @@ new gridjs.Grid({
                             </div>
                             <div class="col-sm">
                                 <div class="mt-3 mt-md-0 mb-3">
-                                    <a href="/admin/create" class="btn btn-success btn-rounded waves-effect waves-light mb-2 me-2"><i class="mdi mdi-plus me-1"></i> Tambah Admin</a>
+                                    <a href="/quote/create" class="btn btn-success btn-rounded waves-effect waves-light mb-2 me-2"><i class="mdi mdi-plus me-1"></i> Tambah Quote</a>
                                 </div>
                             </div>
                         </div>

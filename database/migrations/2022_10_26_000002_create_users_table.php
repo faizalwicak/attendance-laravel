@@ -31,6 +31,7 @@ return new class extends Migration
                 ->references('id')
                 ->on('grades')
                 ->onDelete('cascade');
+            $table->string('gender', 6)->nullable(); // MALE / FEMALE
             $table->rememberToken();
             $table->timestamps();
         });

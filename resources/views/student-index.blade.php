@@ -33,6 +33,10 @@ new gridjs.Grid({
             name: 'Nama',
         },
         {
+            name: 'Jenis Kelamin',
+        },
+
+        {
             name: 'Kelas',
             width: '200px',
         },
@@ -62,11 +66,14 @@ new gridjs.Grid({
   search: true,
   data: [
     @foreach($users as $user)
-    ["", "{{ $user->username }}", "{{ $user->name }}", "{{ $user->grade->name }}", "{{ $user->id }}"],
+    ["", "{{ $user->username }}", "{{ $user->name }}", "{{ $user->gender == 'MALE' ? 'L' : 'P' }}", "{{ $user->grade->name }}", "{{ $user->id }}"],
     @endforeach
   ]
 }).render(document.getElementById("table-data"));
 
+document.getElementById("select-grade").addEventListener('change', function () {
+    location.href = "/grade/" + this.value + "/student"
+})
 
 </script>
 @endsection
@@ -76,7 +83,18 @@ new gridjs.Grid({
     <div class="col-lg-12">
         <div class="card">
             <div class="card-body">
-
+                <div class="row"> 
+                    <div class="col-md-6">
+                        <div class="form-floating mb-3">
+                            <select class="form-select" id="select-grade" aria-label="Kelas">
+                                @foreach ($grades as $grade)
+                                <option value="{{$grade->id}}" {{$selectedGrade == $grade->id ? 'selected' : ''}}>{{$grade['name']}}</option>                                
+                                @endforeach
+                            </select>
+                            <label for="select-grade">Kelas</label>
+                        </div>    
+                    </div>
+                </div>
                 <div class="position-relative">
                     <div class="modal-button mt-2">
                         <div class="row align-items-start">

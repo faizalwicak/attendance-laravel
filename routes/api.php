@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\Api\AbsentController;
+use App\Http\Controllers\Api\ClockController;
 use App\Http\Controllers\Api\LoginController;
-use Illuminate\Http\Request;
+use App\Http\Controllers\Api\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -18,9 +20,20 @@ use Illuminate\Support\Facades\Route;
 Route::post('/login', [LoginController::class, 'login']);
 
 Route::group(['middleware' => 'auth:api'], function () {
-    Route::get('/profile', [LoginController::class, 'profile']);
-    Route::get('/school', [LoginController::class, 'school']);
-    Route::get('/grade', [LoginController::class, 'grade']);
+    Route::get('/profile', [ProfileController::class, 'profile']);
+    Route::get('/school', [ProfileController::class, 'school']);
+    Route::get('/grade', [ProfileController::class, 'grade']);
 
-    Route::post('/clock', [LoginController::class, 'clock']);
+    Route::post('/password', [LoginController::class, 'changePassword']);
+
+    Route::post('/clock-in', [ClockController::class, 'clockIn']);
+    Route::post('/clock-out', [ClockController::class, 'clockOut']);
+
+    Route::get('/clock-status', [ClockController::class, 'clockStatus']);
+    Route::get('/clock-history', [ClockController::class, 'history']);
+    
+    Route::post('/absent', [AbsentController::class, 'create']);
+    Route::get('/absent', [AbsentController::class, 'index']);
+    Route::delete('/absent/{id}', [AbsentController::class, 'destroy']);
 });
+

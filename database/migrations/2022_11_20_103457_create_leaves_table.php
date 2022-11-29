@@ -13,15 +13,16 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('records', function (Blueprint $table) {
+        Schema::create('leaves', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id');
-            $table->foreign('user_id')
+            $table->unsignedBigInteger('record_id');
+            $table->foreign('record_id')
                 ->references('id')
-                ->on('users')
+                ->on('records')
                 ->onDelete('cascade');
-            $table->date('date');
-            $table->boolean('is_leave')->default('0');
+            $table->string('type', 10); // SICK / LEAVE
+            $table->string('description', 255);
+            $table->string('leave_status', 10); // WAITING / ACCEPT / REJECT
             $table->timestamps();
         });
     }
@@ -33,6 +34,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('records');
+        Schema::dropIfExists('leaves');
     }
 };

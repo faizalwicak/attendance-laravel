@@ -10,6 +10,23 @@ class Record extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id', 'lat', 'lng', 'date', 'clock_in', 'clock_out', 'status',
+        'user_id',
+        'date',
+        'is_leave'
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function leave()
+    {
+        return $this->hasOne(Leave::class, 'record_id');
+    }
+
+    public function attend()
+    {
+        return $this->hasOne(Attend::class, 'record_id');
+    }
 }

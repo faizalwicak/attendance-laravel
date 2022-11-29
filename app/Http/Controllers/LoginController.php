@@ -10,16 +10,17 @@ use Illuminate\Support\Facades\Session;
 
 class LoginController extends Controller
 {
-    public function login() 
-    {           
+    public function login()
+    {
         if (Auth::check()) {
-            return redirect('home');
+            return redirect('/');
         } else {
             return view('login');
         }
     }
 
-    public function actionLogin(Request $request) {
+    public function actionLogin(Request $request)
+    {
         $validateData = $request->validate([
             'username' => 'required|exists:users,username',
             'password' => 'required',
@@ -33,17 +34,18 @@ class LoginController extends Controller
 
         if ($user && Hash::check($validateData['password'], $user->password) && in_array($user->role, ['SUPERADMIN', 'ADMIN', 'OPERATOR'])) {
             Auth::login($user);
-            if ($user-> role == 'SUPERADMIN') {
+            if ($user->role == 'SUPERADMIN') {
                 return redirect('/school');
             }
-            return redirect('home');
-        } 
+            return redirect('/overview');
+        }
 
         Session::flash('error', 'Username atau Password Salah.');
-        return view('login');
+        return redirect('login')->withInput();
     }
 
-    public function actionLogout() {
+    public function actionLogout()
+    {
         Auth::logout();
         return redirect('login');
     }

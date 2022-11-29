@@ -52,11 +52,33 @@
 
                 @if(auth()->user()->role == 'ADMIN')
                 <li>
-                    <a href="/home">
+                    <a href="/overview">
                         <i class="bx bxs-home icon nav-icon"></i>
                         <span class="menu-item" data-key="t-calendar">Beranda</span>
                     </a>
                 </li>
+
+                <li>
+                    <a href="/record/leave">
+                        <i class="bx bxs-report icon nav-icon"></i>
+                        <span class="menu-item" data-key="t-calendar">Izin</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="/record/day">
+                        <i class="bx bxs-report icon nav-icon"></i>
+                        <span class="menu-item" data-key="t-school">Laporan Harian</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="/record/month">
+                        <i class="bx bxs-report icon nav-icon"></i>
+                        <span class="menu-item" data-key="t-school">Laporan Bulanan</span>
+                    </a>
+                </li>
+
                 <li>
                     <a href="/me/school">
                         <i class="bx bxs-school icon nav-icon"></i>
@@ -68,6 +90,13 @@
                     <a href="/admin">
                         <i class="bx bxs-group icon nav-icon"></i>
                         <span class="menu-item" data-key="t-calendar">Admin</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="/quote">
+                        <i class="bx bxs-message-rounded-dots icon nav-icon"></i>
+                        <span class="menu-item" data-key="t-calendar">Quote</span>
                     </a>
                 </li>
                 

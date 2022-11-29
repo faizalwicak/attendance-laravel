@@ -10,7 +10,8 @@ use Barryvdh\Debugbar\Facades\Debugbar;
 
 class AdminController extends Controller
 {
-    public function index(Request $request) {
+    public function index(Request $request)
+    {
         $user = $request->user();
         if ($user->role == 'SUPERADMIN') {
             $users = User::where('role', 'ADMIN')
@@ -20,7 +21,7 @@ class AdminController extends Controller
             $users = User::where('school_id', $user->school_id)
                 ->where(function ($q) {
                     $q->where('role', 'ADMIN')
-                    ->orWhere('role', 'OPERATOR');
+                        ->orWhere('role', 'OPERATOR');
                 })
                 ->orderBy('name')
                 ->get();
@@ -28,12 +29,14 @@ class AdminController extends Controller
         return view('admin-index', ['title' => 'Daftar Admin', 'users' => $users]);
     }
 
-    public function create() {
+    public function create()
+    {
         $schools = School::orderBy('name')->get();
         return view('admin-form', ['title' => 'Tambah Admin', 'user' => null, 'schools' => $schools]);
     }
 
-    public function store(Request $request) {
+    public function store(Request $request)
+    {
         $validateRole = [
             'username' => 'required|max:100|unique:users,username',
             'name' => 'required|max:100',
@@ -85,10 +88,11 @@ class AdminController extends Controller
         User::create($validateData);
 
         return redirect('/admin')
-            ->with('success','Admin berhasil dibuat.');
+            ->with('success', 'Admin berhasil dibuat.');
     }
 
-    public function edit(Request $request, $id) {
+    public function edit(Request $request, $id)
+    {
         if ($request->user()->role == 'SUPERUSER') {
             $user = User::findOrFail($id);
             if (!in_array($user->role, ['ADMIN'])) {
@@ -100,19 +104,20 @@ class AdminController extends Controller
                 return abort(403);
             }
         }
-        
+
         $schools = School::orderBy('name')->get();
-        
-        return view('admin-form', ['title' => 'Edit "'.$user->name.'"', 'user' => $user, 'schools' => $schools]);
+
+        return view('admin-form', ['title' => 'Edit "' . $user->name . '"', 'user' => $user, 'schools' => $schools]);
     }
 
-    public function update(Request $request, $id) {
+    public function update(Request $request, $id)
+    {
         $user = User::findOrFail($id);
 
         $validateRole = [
-            'username' => 'required|max:100|unique:users,username,'.$user->id,
+            'username' => 'required|max:100|unique:users,username,' . $user->id,
             'name' => 'required|max:100',
-            'email' => 'required|email|unique:users,email,'.$user->id,
+            'email' => 'required|email|unique:users,email,' . $user->id,
             'password' => 'nullable|min:6',
             're-password' => 'same:password',
         ];
@@ -122,7 +127,7 @@ class AdminController extends Controller
             'username.unique' => 'Username telah terpakai.',
             'name.required' => 'Nama tidak boleh kosong.',
             'name.max' => 'Nama maksimal 100 karakter.',
-            
+
             'email.required' => 'Email tidak boleh kosong.',
             'email.email' => 'Email tidak valid.',
             'email.unique' => 'Email telah terpakai.',
@@ -160,11 +165,11 @@ class AdminController extends Controller
         $user->update($validateData);
 
         return redirect('/admin')
-            ->with('success','Admin berhasil disimpan.');
+            ->with('success', 'Admin berhasil disimpan.');
     }
 
     public function destroy(Request $request, $id)
-    {   
+    {
         $user = User::findOrFail($id);
         if ($request->user()->role == 'SUPERUSER') {
             if (!in_array($user->role, ['ADMIN'])) {
@@ -176,8 +181,46 @@ class AdminController extends Controller
             }
         }
         $user->delete();
-       
+
         return redirect('/admin')
-            ->with('success','Admin berhasil dihapus.');
+            ->with('success', 'Admin berhasil dihapus.');
+    }
+
+    public function operatorAccess($id)
+    {
+        $user = User::where('id', $id)->where('school_id', auth()->user()->school_id)->with('grades')->first();
+        if (!$user) return abort(404);
+        $selectedGrades = [];
+        foreach ($user->grades as $u) {
+            array_push($selectedGrades, $u->id);
+        }
+        $school = School::where('id', auth()->user()->school_id)->with('grades')->first();
+        return view('admin-form-access', ['title' => 'Akses Operator', 'user' => $user, 'grades' => $school->grades, 'selectedGrades' => $selectedGrades]);
+    }
+
+    public function operatorAccessAction(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+
+        if ($user->role != 'OPERATOR') return abort(403);
+
+        $validateRole = [
+            'access' => 'nullable',
+            'access.*' => 'required|int|exists:grades,id',
+        ];
+        $validateMessage = [
+            'access.array' => 'Kelas tidak valid.',
+            'access.*.required' => 'Kelas tidak boleh kosong.',
+            'access.*.int' => 'Kelas tidak valid.',
+            'access.*.exists' => 'Kelas tidak ditemukan.',
+        ];
+
+        $validateData = $request->validate($validateRole, $validateMessage);
+
+        $user->grades()->sync(isset($validateData['access']) ? $validateData['access'] : []);
+        // return response()->json($validateData);
+
+        return redirect('/admin')
+            ->with('success', 'Akses berhasil disimpan.');
     }
 }

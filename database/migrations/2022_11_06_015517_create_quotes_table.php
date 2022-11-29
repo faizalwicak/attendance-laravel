@@ -13,8 +13,15 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('absens', function (Blueprint $table) {
+        Schema::create('quotes', function (Blueprint $table) {
             $table->id();
+            $table->string('message', 255)->nullable();
+            $table->boolean('active')->default(false);
+            $table->unsignedBigInteger('school_id')->nullable();
+            $table->foreign('school_id')
+                ->references('id')
+                ->on('schools')
+                ->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -26,6 +33,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('absens');
+        Schema::dropIfExists('quotes');
     }
 };

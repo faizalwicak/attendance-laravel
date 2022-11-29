@@ -3,14 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Grade;
-use App\Models\Record;
-use App\Models\School;
-use Barryvdh\Debugbar\Facades\Debugbar;
-use DateTime;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Hash;
 
 class LoginController extends Controller
 {
@@ -35,4 +31,31 @@ class LoginController extends Controller
         ]);
     }
 
+    public function changePassword(Request $request) {
+        $user = User::findOrFail(Auth::user()->id);
+        
+        $validateData = $request->validate([
+            'old-password' => ['required', function ($attribute, $value, $fail) {
+                if (!Hash::check($value, Auth::user()->password)) {
+                    $fail('Password lama salah.');
+                }
+            },],
+            'password' => 'required|min:6',
+            're-password' => 'required|same:password',
+        ], [
+            'old-password.required' => 'Password lama tidak boleh kosong.',
+            'password.required' => 'Password baru tidak boleh kosong.',
+            'password.min' => 'Password baru minimal 6 karakter.',
+            're-password.required' => 'Konfirmasi password tidak boleh kosong.',
+            're-password.same' => 'Konfirmasi password tidak sama.',
+        ]);
+
+        $validateData['password'] = Hash::make($validateData['password']);
+ 
+        $user->update($validateData);
+
+        return response()->json([
+            'message' => 'Berhasil mengubah password.',
+        ]);
+    }
 }

@@ -5,16 +5,20 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class School extends Model
+class Leave extends Model
 {
     use HasFactory;
 
+
     protected $fillable = [
-        'name', 'lat', 'lng', 'distance', 'clock_in', 'clock_out'
+        'record_id',
+        'type',
+        'description',
+        'leave_status',
     ];
 
-    public function grades()
+    public function record()
     {
-        return $this->hasMany(Grade::class, 'school_id');
+        return $this->belongsTo(Record::class);
     }
 }

@@ -13,15 +13,18 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('records', function (Blueprint $table) {
+        Schema::create('admin_accesses', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('user_id')->nullable();
             $table->foreign('user_id')
                 ->references('id')
                 ->on('users')
                 ->onDelete('cascade');
-            $table->date('date');
-            $table->boolean('is_leave')->default('0');
+            $table->unsignedBigInteger('grade_id')->nullable();
+            $table->foreign('grade_id')
+                ->references('id')
+                ->on('grades')
+                ->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -33,6 +36,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('records');
+        Schema::dropIfExists('admin_accesses');
     }
 };

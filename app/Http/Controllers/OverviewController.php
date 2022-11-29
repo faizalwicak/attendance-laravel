@@ -4,34 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Models\Grade;
 use App\Models\Leave;
-use App\Models\Record;
 use App\Models\User;
 use Illuminate\Http\Request;
 
-class HomeController extends Controller
+class OverviewController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
 
-        $grade_id = $request->get('grade');
-
-        if ($grade_id) {
-            $grade = Grade::where('id', $grade_id)
-                ->where('school_id', auth()->user()->school_id)
-                ->orderBy('name')
-                ->first();
-        } else {
-            $grade = Grade::where('school_id', auth()->user()->school_id)
-                ->orderBy('name')
-                ->first();
-        }
-
         $users = [];
-        if ($grade) {
-            $users = User::where('school_id', auth()->user()->school_id)
-                ->where('grade_id', $grade->id)
-                ->get();
-        }
 
         $grades = Grade::where('school_id', auth()->user()->school_id)
             ->orderBy('name')
@@ -64,6 +45,7 @@ class HomeController extends Controller
                 }
             }
             array_push($grade_array, [
+                'id' => $g->id,
                 'name' => $g->name,
                 'attend' => $attend,
                 'leave' => $leave,
@@ -85,43 +67,8 @@ class HomeController extends Controller
             'grades' => $grades,
             'grade_array' => $grade_array,
             'aggregate' => $aggregate,
-            'selectedGrade' => $grade
         ];
 
-        return view('home', $params);
-    }
-
-    public function accept($id)
-    {
-        $record = Absent::where('id', $id)
-            ->with('user')
-            ->whereHas('user', function ($query) {
-                $query->where('school_id', auth()->user()->school_id);
-            })
-            ->first();
-        if (!$record || $record->status != 'WAITING') {
-            return abort('404');
-        }
-
-        $record->update(['status' => 'ACCEPT']);
-
-        return redirect('/home')->with('success', 'Data berhasil disimpan.');
-    }
-
-    public function decline($id)
-    {
-        $record = Absent::where('id', $id)
-            ->with('user')
-            ->whereHas('user', function ($query) {
-                $query->where('school_id', auth()->user()->school_id);
-            })
-            ->first();
-        if (!$record || $record->status != 'WAITING') {
-            return abort('404');
-        }
-
-        $record->update(['status' => 'DECLINE']);
-
-        return redirect('/home')->with('success', 'Data berhasil disimpan.');
+        return view('overview', $params);
     }
 }
