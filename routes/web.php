@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\EventController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LoginController;
@@ -85,6 +86,8 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/record/leave', [RecordController::class, 'record_leave']);
         Route::get('/record/{id}', [RecordController::class, 'record_detail']);
         Route::put('/record/{id}', [RecordController::class, 'record_status']);
+
+        Route::resource('/event', EventController::class);
     });
 
     Route::get('/me/profile', [ProfileController::class, 'updateProfilePage']);

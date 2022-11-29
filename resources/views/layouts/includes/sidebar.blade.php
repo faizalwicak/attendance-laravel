@@ -87,6 +87,13 @@
                 </li>
 
                 <li>
+                    <a href="/event">
+                        <i class="bx bxs-calendar icon nav-icon"></i>
+                        <span class="menu-item" data-key="t-calendar">Event</span>
+                    </a>
+                </li>
+
+                <li>
                     <a href="/admin">
                         <i class="bx bxs-group icon nav-icon"></i>
                         <span class="menu-item" data-key="t-calendar">Admin</span>

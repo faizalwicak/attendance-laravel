@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Event;
 use App\Models\Grade;
 use App\Models\Leave;
 use App\Models\Record;
@@ -43,13 +44,23 @@ class RecordController extends Controller
 
         $currentDate = new DateTime($selectedMonth . "-01");
 
+        $holiday = Event::where('type', 'HOLIDAY')
+            ->whereYear('date', $currentDate->format('Y'))
+            ->whereMonth('date', $currentDate->format('m'))
+            ->get();
+
+        $holidayArray = [];
+        foreach ($holiday as $h) {
+            array_push($holidayArray, date('j', strtotime($h->date)));
+        }
+
         $dateArray = [];
         $dateString = [];
 
         $r = 1;
         while ($r) {
 
-            if (in_array($currentDate->format('w'), ['1', '2', '3', '4', '5'])) {
+            if (in_array($currentDate->format('w'), ['1', '2', '3', '4', '5']) && !in_array($currentDate->format('j'), $holidayArray)) {
                 array_push($dateString, $currentDate->format('Y-m-d'));
                 $dateArray[$currentDate->format('j')] = [];
             }
