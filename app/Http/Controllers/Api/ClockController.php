@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 
 class ClockController extends Controller
 {
-    
+
     /**
      * Calculates the great-circle distance between two points, with
      * the Haversine formula.
@@ -22,22 +22,27 @@ class ClockController extends Controller
      * @return float Distance between points in [m] (same as earthRadius)
      */
     public function haversineGreatCircleDistance(
-        $latitudeFrom, $longitudeFrom, $latitudeTo, $longitudeTo, $earthRadius = 6371000)
-    {
+        $latitudeFrom,
+        $longitudeFrom,
+        $latitudeTo,
+        $longitudeTo,
+        $earthRadius = 6371000
+    ) {
         // convert from degrees to radians
         $latFrom = deg2rad($latitudeFrom);
         $lonFrom = deg2rad($longitudeFrom);
         $latTo = deg2rad($latitudeTo);
         $lonTo = deg2rad($longitudeTo);
-    
+
         $latDelta = $latTo - $latFrom;
         $lonDelta = $lonTo - $lonFrom;
-    
+
         $angle = 2 * asin(sqrt(pow(sin($latDelta / 2), 2) + cos($latFrom) * cos($latTo) * pow(sin($lonDelta / 2), 2)));
         return $angle * $earthRadius;
     }
 
-    public function clockIn(Request $request) {
+    public function clockIn(Request $request)
+    {
         $data = $request->validate([
             'lat' => 'required|numeric|min:-90|max:90',
             'lng' => 'required|numeric|min:-180|max:180',
@@ -54,17 +59,16 @@ class ClockController extends Controller
         $nowDate = new DateTime();
 
         $record = Record::where('date', $nowDate->format('Y-m-d'))
+            ->with('attend')
             ->where('user_id', auth()->user()->id)
             ->first();
 
-        if ($record && $record->clock_in_time != null) {
+        if ($record && $record->attend->clock_in_time != null) {
             return response()->json(['message' => 'Anda sudah absen masuk.'], 422);
         }
 
         $school = School::find(auth()->user()->school_id)->first();
-        $status = null;
-        $message = "";
-        
+
         $distance = $this->haversineGreatCircleDistance($school->lat, $school->lng, $data['lat'], $data['lng']);
         if ($distance > $school->distance) {
             return response()->json(['message' => 'Anda berada di luar area sekolah.'], 422);
@@ -75,8 +79,11 @@ class ClockController extends Controller
         $nowTime = strtotime($nowDate->format('H:i:s'));
 
         if ($nowTime < strtotime($limitTime)) {
-            return response()->json(['message' => 'Anda bisa absensi setelah jam '.$limitTime.'.'], 422);
+            return response()->json(['message' => 'Anda bisa absensi setelah jam ' . $limitTime . '.'], 422);
         }
+
+        $status = null;
+        $message = "";
 
         if ($nowTime <= $clockInTime) {
             $status = 'ON_TIME';
@@ -87,23 +94,25 @@ class ClockController extends Controller
         }
 
         if ($record) {
-            $createdData = [
+            $record = $record->attend()->update([
                 'clock_in_time' => $nowDate->format('H:i:s'),
                 'clock_in_lat' => $data['lat'],
                 'clock_in_lng' => $data['lng'],
                 'clock_in_status' => $status,
-            ];
-            $record = $record->update($createdData);
+            ]);
         } else {
             $createdData = [
                 'user_id' => auth()->user()->id,
                 'date' => $nowDate->format('Y-m-d'),
+                'is_leave' => 0,
+            ];
+            $record = Record::create($createdData);
+            $record->attend()->create([
                 'clock_in_time' => $nowDate->format('H:i:s'),
                 'clock_in_lat' => $data['lat'],
                 'clock_in_lng' => $data['lng'],
                 'clock_in_status' => $status,
-            ];
-            $record = Record::create($createdData);
+            ]);
         }
 
         return response()->json([
@@ -112,7 +121,8 @@ class ClockController extends Controller
         ]);
     }
 
-    public function clockOut(Request $request) {
+    public function clockOut(Request $request)
+    {
         $data = $request->validate([
             'lat' => 'nullable|numeric|min:-90|max:90',
             'lng' => 'nullable|numeric|min:-180|max:180',
@@ -128,46 +138,47 @@ class ClockController extends Controller
 
         $record = Record::where('date', $nowDate->format('Y-m-d'))
             ->where('user_id', auth()->user()->id)
+            ->with('attend')
             ->first();
 
-        if ($record && $record->clock_out_time != null) {
-            return response()->json(['message' => 'Anda sudah absen pulang.'], 422);
-        }
+        // if ($record && $record->attend->clock_out_time != null) {
+        //     return response()->json(['message' => 'Anda sudah absen pulang.'], 422);
+        // }
 
         $school = School::find(auth()->user()->school_id)->first();
         $status = null;
         $message = "Presensi berhasil.";
-        
+
         $distance = $this->haversineGreatCircleDistance($school->lat, $school->lng, $data['lat'], $data['lng']);
         if ($distance > $school->distance) {
             return response()->json(['message' => 'Anda berada di luar area sekolah.'], 422);
         }
 
-        // $clockInTime = strtotime($school->clock_in);
         $limitTime = '22:00:00';
         $nowTime = strtotime($nowDate->format('H:i:s'));
 
         if ($nowTime > strtotime($limitTime)) {
-            return response()->json(['message' => 'Anda bisa absensi sebelum jam '.$limitTime.'.'], 422);
+            return response()->json(['message' => 'Anda bisa absensi sebelum jam ' . $limitTime . '.'], 422);
         }
 
         if ($record) {
-            $createdData = [
+            $record = $record->attend()->update([
                 'clock_out_time' => $nowDate->format('H:i:s'),
                 'clock_out_lat' => $data['lat'],
                 'clock_out_lng' => $data['lng'],
-            ];
-            $record = $record->update($createdData);
+            ]);
         } else {
             $createdData = [
                 'user_id' => auth()->user()->id,
                 'date' => $nowDate->format('Y-m-d'),
+                'is_leave' => 0,
+            ];
+            $record = Record::create($createdData);
+            $record->attend()->create([
                 'clock_out_time' => $nowDate->format('H:i:s'),
                 'clock_out_lat' => $data['lat'],
                 'clock_out_lng' => $data['lng'],
-                'clock_out_status' => $status,
-            ];
-            $record = Record::create($createdData);
+            ]);
         }
 
         return response()->json([
@@ -176,11 +187,12 @@ class ClockController extends Controller
         ]);
     }
 
-    public function history(Request $request) {
+    public function history(Request $request)
+    {
         $now = new DateTime('now');
         $month = $now->format('m');
         $year = $now->format('Y');
-        
+
         if ($request->has('month')) {
             $month = $request->input('month');
         }
@@ -190,31 +202,34 @@ class ClockController extends Controller
 
         $now->setDate($year, $month, 1);
         $record_array = [];
-        for($i=0; $i < $now->format('t'); $i++) {
+        for ($i = 0; $i < $now->format('t'); $i++) {
             array_push($record_array, null);
         }
-        
+
         $records = Record::where('user_id', auth()->user()->id)
-                    ->whereMonth('date', $month)
-                    ->whereYear('date', $year)
-                    ->get();
-        
-        foreach($records as $value) {
+            ->whereMonth('date', $month)
+            ->whereYear('date', $year)
+            ->with('attend')
+            ->with('leave')
+            ->get();
+
+        foreach ($records as $value) {
             $value_date = strtotime($value['date']);
-            $record_array[(int)date('d', $value_date)-1] = $value;
+            $record_array[(int)date('d', $value_date) - 1] = $value;
         }
 
         return response()->json($record_array);
     }
 
-    public function clockStatus() {
+    public function clockStatus()
+    {
         $now = new DateTime('now');
-        
+
         $records = Record::where('user_id', auth()->user()->id)
-            ->whereDate('date', '=', $now->format('Y-m-d'))            
+            ->whereDate('date', '=', $now->format('Y-m-d'))
+            ->with('attend')
             ->first();
-                    
+
         return response()->json($records);
     }
-
 }

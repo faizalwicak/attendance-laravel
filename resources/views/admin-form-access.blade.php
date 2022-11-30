@@ -11,11 +11,22 @@
 <script src="/assets/libs/choices.js/public/assets/scripts/choices.min.js"></script>
 
 <script>
-    new Choices("#input-access",{removeItemButton:!0})//.setValue({{json_encode($selectedGrades)}})
+    new Choices("#input-access",{removeItemButton:!0, choices: [
+        @foreach ($grades as $grade)
+        {
+            value: '{{$grade->id}}',
+            label: '{{$grade->name}}',
+            selected: {{in_array($grade->id, $selectedGrades) ? 'true' : 'false'}},
+        },
+        @endforeach
+    ]})
 </script>
 @endsection
 
 @section('content')
+{{-- // @foreach ($grades as $grade)
+        //     <option value="{{$grade->id}}">{{$grade->name}}</option>
+        // @endforeach --}}
 <div class="card">
     <div class="card-body">
         <form action="{{'/admin/'.$user->id.'/access'}}" method="POST">
@@ -34,10 +45,6 @@
             <div class="mb-3">
                 <label for="input-access" class="form-label">Kelas</label>                
                 <select class="form-control" name="access[]" id="input-access" placeholder="-- Pilih kelas --" multiple>
-                    {{-- <option value="Choice 1" {{ old('access', $user ? $user->username : '') }}>Choice 1</option> --}}
-                    @foreach ($grades as $grade)
-                    <option value="{{$grade->id}}">{{$grade->name}}</option>
-                    @endforeach
                 </select>
             </div>
 

@@ -1,9 +1,12 @@
 <?php
 
-use App\Http\Controllers\Api\AbsentController;
 use App\Http\Controllers\Api\ClockController;
+use App\Http\Controllers\Api\LeaveController;
 use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Api\ProfileController;
+use App\Http\Controllers\Api\QuoteController;
+use App\Http\Controllers\Api\RecordController;
+use App\Models\Record;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -31,9 +34,11 @@ Route::group(['middleware' => 'auth:api'], function () {
 
     Route::get('/clock-status', [ClockController::class, 'clockStatus']);
     Route::get('/clock-history', [ClockController::class, 'history']);
-    
-    Route::post('/absent', [AbsentController::class, 'create']);
-    Route::get('/absent', [AbsentController::class, 'index']);
-    Route::delete('/absent/{id}', [AbsentController::class, 'destroy']);
-});
 
+    Route::get('/leave', [LeaveController::class, 'index']);
+    Route::post('/leave', [LeaveController::class, 'create']);
+
+    Route::get('/quote', [QuoteController::class, 'index']);
+
+    Route::get('/record-friend', [RecordController::class, 'friend']);
+});
