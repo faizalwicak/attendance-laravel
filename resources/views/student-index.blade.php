@@ -18,12 +18,15 @@ new gridjs.Grid({
   columns:
     [
         {
-            name: 'Logo',
+            name: 'Foto',
             sort: false,
             formatter: (function (cell) {
+                if (cell != "") {
+                    return gridjs.html(`<img src="/images/${cell}" alt="" class="avatar-sm rounded-circle me-2" />`);
+                }
                 return gridjs.html('<img src="/assets/images/logo-dark-sm.png" alt="" class="avatar-sm rounded-circle me-2" />');
             }),
-            width: '50px',
+            width: '80px',
         },
         {
             name: 'Username',
@@ -43,7 +46,7 @@ new gridjs.Grid({
         {
             name: "Action",
             sort: false,
-            width: '50px',
+            width: '100px',
             formatter: (function (cell) {
                 return gridjs.html(`
                     <div class="d-flex gap-3">
@@ -60,13 +63,13 @@ new gridjs.Grid({
       }
     ],
   pagination: {
-    limit: 7
+    limit: 10
   },
   sort: true,
   search: true,
   data: [
     @foreach($users as $user)
-    ["", "{{ $user->username }}", "{{ $user->name }}", "{{ $user->gender == 'MALE' ? 'L' : 'P' }}", "{{ $user->grade->name }}", "{{ $user->id }}"],
+    ["{{ $user->image }}", "{{ $user->username }}", "{{ $user->name }}", "{{ $user->gender == 'MALE' ? 'L' : 'P' }}", "{{ $user->grade->name }}", "{{ $user->id }}"],
     @endforeach
   ]
 }).render(document.getElementById("table-data"));

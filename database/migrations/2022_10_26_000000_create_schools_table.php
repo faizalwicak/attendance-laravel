@@ -21,6 +21,7 @@ return new class extends Migration
             $table->integer('distance');
             $table->time('clock_in');
             $table->time('clock_out');
+            $table->string('image', 100)->nullable();
             $table->timestamps();
         });
     }

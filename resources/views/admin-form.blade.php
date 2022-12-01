@@ -9,7 +9,7 @@
 @section('content')
 <div class="card">
     <div class="card-body">
-        <form action="{{ $user ? '/admin/'.$user->id : '/admin' }}" method="POST">
+        <form action="{{ $user ? '/admin/'.$user->id : '/admin' }}" method="POST" enctype="multipart/form-data">
             @if ($errors->any())
                 @foreach ($errors->all() as $error)
                     <div class="alert alert-danger alert-border-left alert-dismissible fade show" role="alert">
@@ -71,6 +71,16 @@
             <div class="mb-3">
                 <label for="input-re-password" class="form-label">Ulangi Password</label>
                 <input name="re-password" type="password" class="form-control" id="input-re-password" {{ !$user ? 'required' : ''}}>
+            </div>
+            
+            <div class="mb-3">
+                <label for="input-name" class="form-label">Foto</label>
+                @if ($user && $user->image != null && $user->image != "")
+                <br><br>
+                <img src="/images/{{$user->image}}" alt="" class="avatar-lg rounded-circle me-2"/>
+                <br><br>
+                @endif
+                <input name="image" class="form-control" type="file" id="input-image" value="{{ old('image', $user ? $user->image : '') }}">
             </div>
 
             <div>

@@ -21,7 +21,10 @@ new gridjs.Grid({
             name: 'Logo',
             sort: false,
             formatter: (function (cell) {
-                return gridjs.html('<img src="/assets/images/logo-dark-sm.png" alt="" class="avatar-sm rounded-circle me-2" />');
+                if (cell != "") {
+                    return gridjs.html(`<img src="/images/${cell}" alt="" class="avatar-sm rounded-circle me-2" />`);
+                }
+                return gridjs.html('<img src="/assets/images/default-school.png" alt="" class="avatar-sm rounded-circle me-2" />');
             }),
             width: '50px',
         },
@@ -48,13 +51,13 @@ new gridjs.Grid({
       }
     ],
   pagination: {
-    limit: 7
+    limit: 10
   },
   sort: true,
   search: true,
   data: [
     @foreach($schools as $school)
-    ["", "{{ $school->name }}", "{{ $school->id }}"],
+    ["{{$school->image}}", "{{ $school->name }}", "{{ $school->id }}"],
     @endforeach
   ]
 }).render(document.getElementById("table-data"));

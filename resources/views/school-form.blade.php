@@ -91,7 +91,7 @@
 @section('content')
 <div class="card">
     <div class="card-body">
-        <form action="{{ $school ? route('school.update', $school->id) : route('school.store') }}" method="POST">
+        <form action="{{ $school ? route('school.update', $school->id) : route('school.store') }}" method="POST" enctype="multipart/form-data">
             @if ($errors->any())
                 @foreach ($errors->all() as $error)
                     <div class="alert alert-danger alert-border-left alert-dismissible fade show" role="alert">
@@ -107,53 +107,62 @@
             @endif
 
             <div class="mb-3">
-                <label for="input-name" class="form-label">Nama Sekolah</label>
+                <label for="input-name" class="form-label">Nama Sekolah *</label>
                 <input name="name" type="text" class="form-control" id="input-name" value="{{ old('name', $school ? $school->name : '') }}" required>
             </div>
-
             
             <div class="row">
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label for="input-clockin" class="form-label">Jam Masuk</label>
+                        <label for="input-clockin" class="form-label">Jam Masuk *</label>
                         <input name="clock_in" value="{{ old('clock_in', $school ? $school->clock_in : '') }}" type="text" class="form-control flatpickr-input active" id="input-clockin" readonly="readonly">
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label for="input-clockout" class="form-label">Jam Pulang</label>
+                        <label for="input-clockout" class="form-label">Jam Pulang *</label>
                         <input name="clock_out" value="{{ old('clock_out', $school ? $school->clock_out : '') }}" type="text" class="form-control flatpickr-input active" id="input-clockout" readonly="readonly">
                     </div>
                 </div>
             </div>
 
             <div class="mb-3">
-                <label for="input-name" class="form-label">Lokasi</label>
+                <label for="input-name" class="form-label">Lokasi *</label>
                 <div id="leaflet-map-marker" class="leaflet-map"></div>
             </div>
 
             <div class="row">
                 <div class="col-lg-4">
                     <div class="mb-3">
-                        <label for="input-lat" class="form-label">Latitude</label>
+                        <label for="input-lat" class="form-label">Latitude *</label>
                         <input name="lat" value="{{ old('lat', $school ? $school->lat : '') }}" type="number" step="0.000001" class="form-control" id="input-lat" readonly>
                     </div>
                 </div>
                 <div class="col-lg-4">
                     <div class="mb-3">
-                        <label for="input-lng" class="form-label">Longitude</label>
+                        <label for="input-lng" class="form-label">Longitude *</label>
                         <input name="lng" value="{{ old('lng', $school ? $school->lng : '') }}" type="number" step="0.000001" class="form-control" id="input-lng" readonly>
                     </div>
                 </div>
                 
                 <div class="col-lg-4">
                     <div class="mb-3">
-                        <label for="input-distance" class="form-label">Jarak Jangkauan (meter)</label>
+                        <label for="input-distance" class="form-label">Jarak Jangkauan (meter) *</label>
                         <input name="distance" value="{{ old('distance', $school ? $school->distance : '50') }}" type="number" class="form-control" id="input-distance" value="10" required>
                     </div>
                 </div>
             </div>
 
+            <div class="mb-3">
+                <label for="input-name" class="form-label">Logo</label>
+                @if ($school && $school->image != null && $school->image != "")
+                <br>
+                <img src="/images/{{$school->image}}" alt="" class="avatar-sm rounded-circle me-2"/>
+                <br>
+                @endif
+                <input name="image" class="form-control" type="file" id="input-image" value="{{ old('image', $school ? $school->image : '') }}">
+            </div>
+            
             <div>
                 <button type="submit" class="btn btn-primary w-md">Simpan</button>
             </div>

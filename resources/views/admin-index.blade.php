@@ -18,12 +18,15 @@ new gridjs.Grid({
   columns:
     [
         {
-            name: 'Logo',
+            name: 'Foto',
             sort: false,
             formatter: (function (cell) {
-                return gridjs.html('<img src="/assets/images/logo-dark-sm.png" alt="" class="avatar-sm rounded-circle me-2" />');
+                if (cell) {
+                    return gridjs.html(`<img src="/images/${cell}" alt="" class="avatar-sm rounded-circle me-2" />`);
+                }
+                return gridjs.html('<img src="/assets/images/default-user.png" alt="" class="avatar-sm rounded-circle me-2" />');
             }),
-            width: '50px',
+            width: '80px',
         },
         {
             name: 'Username',
@@ -67,13 +70,13 @@ new gridjs.Grid({
       }
     ],
   pagination: {
-    limit: 7
+    limit: 10
   },
   sort: true,
   search: true,
   data: [
     @foreach($users as $user)
-    ["", "{{ $user->username }}", "{{ $user->name }}", "{{ auth()->user()->role == 'SUPERADMIN' ? $user->school->name : $user->role }}", ["{{ $user->id }}", "{{ $user->role }}"]],
+    ["{{ $user->image }}", "{{ $user->username }}", "{{ $user->name }}", "{{ auth()->user()->role == 'SUPERADMIN' ? $user->school->name : $user->role }}", ["{{ $user->id }}", "{{ $user->role }}"]],
     @endforeach
   ]
 }).render(document.getElementById("table-data"));

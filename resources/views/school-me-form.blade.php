@@ -91,7 +91,7 @@
 @section('content')
 <div class="card">
     <div class="card-body">
-        <form action="/me/school" method="POST">
+        <form action="/me/school" method="POST" enctype="multipart/form-data">
             @if ($errors->any())
                 @foreach ($errors->all() as $error)
                     <div class="alert alert-danger alert-border-left alert-dismissible fade show" role="alert">
@@ -149,6 +149,16 @@
                         <input name="distance" value="{{ old('distance', $school ? $school->distance : '50') }}" type="number" class="form-control" id="input-distance" value="10" required>
                     </div>
                 </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="input-name" class="form-label">Logo</label>
+                @if ($school->image != null && $school->image != "")
+                <br><br>
+                <img src="/images/{{$school->image}}" alt="" class="avatar-lg rounded-circle me-2"/>
+                <br><br>
+                @endif
+                <input name="image" class="form-control" type="file" id="input-image" value="{{ old('image', $school ? $school->image : '') }}">
             </div>
 
             <div>

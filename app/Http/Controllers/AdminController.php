@@ -43,6 +43,7 @@ class AdminController extends Controller
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:6',
             're-password' => 'required|same:password',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ];
         $validateMessage = [
             'username.required' => 'Username tidak boleh kosong.',
@@ -59,6 +60,9 @@ class AdminController extends Controller
             'password.min' => 'Password minimal 6 karakter.',
             're-password.required' => 'Konfirmasi password tidak boleh kosong.',
             're-password.same' => 'Konfirmasi password tidak sama.',
+            'image.image' => 'Foto tidak valid.',
+            'image.mimes' => 'Foto tidak valid.',
+            'image.max' => 'Foto maksimal 2 MB.'
         ];
 
         $user = $request->user();
@@ -85,6 +89,12 @@ class AdminController extends Controller
 
         $validateData['password'] = Hash::make($validateData['password']);
 
+        if ($request->image != null) {
+            $imageName = uniqid() . time() . '.' . $request->image->extension();
+            $request->image->move(public_path('images'), $imageName);
+            $validateData['image'] = $imageName;
+        }
+
         User::create($validateData);
 
         return redirect('/admin')
@@ -93,7 +103,7 @@ class AdminController extends Controller
 
     public function edit(Request $request, $id)
     {
-        if ($request->user()->role == 'SUPERUSER') {
+        if ($request->user()->role == 'SUPERADMIN') {
             $user = User::findOrFail($id);
             if (!in_array($user->role, ['ADMIN'])) {
                 return abort(403);
@@ -120,6 +130,7 @@ class AdminController extends Controller
             'email' => 'required|email|unique:users,email,' . $user->id,
             'password' => 'nullable|min:6',
             're-password' => 'same:password',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ];
         $validateMessage = [
             'username.required' => 'Username tidak boleh kosong.',
@@ -127,15 +138,17 @@ class AdminController extends Controller
             'username.unique' => 'Username telah terpakai.',
             'name.required' => 'Nama tidak boleh kosong.',
             'name.max' => 'Nama maksimal 100 karakter.',
-
             'email.required' => 'Email tidak boleh kosong.',
             'email.email' => 'Email tidak valid.',
             'email.unique' => 'Email telah terpakai.',
             'password.min' => 'Password minimal 6 karakter.',
             're-password.same' => 'Konfirmasi password tidak sama.',
+            'image.image' => 'Foto tidak valid.',
+            'image.mimes' => 'Foto tidak valid.',
+            'image.max' => 'Foto maksimal 2 MB.'
         ];
 
-        if ($request->user()->role == 'SUPERUSER') {
+        if ($request->user()->role == 'SUPERADMIN') {
             if (!in_array($user->role, ['ADMIN'])) {
                 return abort(403);
             }
@@ -162,6 +175,12 @@ class AdminController extends Controller
             unset($validateData['password']);
         }
 
+        if ($request->image != null) {
+            $imageName = uniqid() . time() . '.' . $request->image->extension();
+            $request->image->move(public_path('images'), $imageName);
+            $validateData['image'] = $imageName;
+        }
+
         $user->update($validateData);
 
         return redirect('/admin')
@@ -171,7 +190,7 @@ class AdminController extends Controller
     public function destroy(Request $request, $id)
     {
         $user = User::findOrFail($id);
-        if ($request->user()->role == 'SUPERUSER') {
+        if ($request->user()->role == 'SUPERADMIN') {
             if (!in_array($user->role, ['ADMIN'])) {
                 return abort(403);
             }

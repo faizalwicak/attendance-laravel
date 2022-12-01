@@ -7,23 +7,27 @@ use Illuminate\Http\Request;
 
 class SchoolController extends Controller
 {
-    public function index() {
+    public function index()
+    {
         $schools = School::orderBy('name')->get();
         return view('school-index', ['title' => 'Daftar Sekolah', 'schools' => $schools]);
     }
 
-    public function create() {
+    public function create()
+    {
         return view('school-form', ['title' => 'Tambah Sekolah', 'school' => null]);
     }
 
-    public function store(Request $request) {
-        $request->validate([
+    public function store(Request $request)
+    {
+        $validateData = $request->validate([
             'name' => 'required|max:100',
             'clock_in' => 'required|date_format:H:i',
             'clock_out' => 'required|date_format:H:i',
             'lat' => 'required|numeric',
             'lng' => 'required|numeric',
-            'distance' => 'required|numeric'
+            'distance' => 'required|numeric',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ], [
             'name.required' => 'Nama tidak boleh kosong.',
             'name.max' => 'Nama maksimal 100 karakter.',
@@ -36,28 +40,41 @@ class SchoolController extends Controller
             'lng.required' => 'Longitude tidak boleh kosong.',
             'lng.numeric' => 'Longitude tidak valid.',
             'distance.required' => 'Jarak tidak boleh kosong.',
-            'distance.numeric' => 'Jarak tidak valid.' 
+            'distance.numeric' => 'Jarak tidak valid.',
+            'image.image' => 'Logo tidak valid.',
+            'image.mimes' => 'File bukan gambar.',
+            'image.max' => 'Logo maksimal 2 MB.'
         ]);
-              
-        School::create($request->all());
+
+        if ($request->image != null) {
+            $imageName = uniqid() . time() . '.' . $request->image->extension();
+            $request->image->move(public_path('images'), $imageName);
+            $validateData['image'] = $imageName;
+        }
+
+        School::create($validateData);
 
         return redirect()
             ->route('school.index')
-            ->with('success','Sekolah berhasil dibuat.');
+            ->with('success', 'Sekolah berhasil dibuat.');
+        // return back()->with('success', $validateData['image']->path());
     }
 
-    public function edit(School $school) {
-        return view('school-form', ['title' => 'Edit "'.$school->name.'"', 'school' => $school]);
+    public function edit(School $school)
+    {
+        return view('school-form', ['title' => 'Edit "' . $school->name . '"', 'school' => $school]);
     }
 
-    public function update(Request $request, School $school) {
-        $request->validate([
+    public function update(Request $request, School $school)
+    {
+        $validateData = $request->validate([
             'name' => 'required|max:100',
             'clock_in' => 'required|date_format:H:i',
             'clock_out' => 'required|date_format:H:i',
             'lat' => 'required|numeric',
             'lng' => 'required|numeric',
-            'distance' => 'required|numeric'
+            'distance' => 'required|numeric',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ], [
             'name.required' => 'Nama tidak boleh kosong.',
             'name.max' => 'Nama maksimal 100 karakter.',
@@ -70,40 +87,52 @@ class SchoolController extends Controller
             'lng.required' => 'Longitude tidak boleh kosong.',
             'lng.numeric' => 'Longitude tidak valid.',
             'distance.required' => 'Jarak tidak boleh kosong.',
-            'distance.numeric' => 'Jarak tidak valid.' 
+            'distance.numeric' => 'Jarak tidak valid.',
+            'image.image' => 'Logo tidak valid.',
+            'image.mimes' => 'File bukan gambar.',
+            'image.max' => 'Logo maksimal 2 MB.'
         ]);
 
-        $school->update($request->all());
+        if ($request->image != null) {
+            $imageName = uniqid() . time() . '.' . $request->image->extension();
+            $request->image->move(public_path('images'), $imageName);
+            $validateData['image'] = $imageName;
+        }
+
+        $school->update($validateData);
 
         return redirect()
             ->route('school.index')
-            ->with('success','Sekolah berhasil disimpan.');
+            ->with('success', 'Sekolah berhasil disimpan.');
     }
 
     public function destroy(School $school)
     {
         $school->delete();
-       
+
         return redirect()
             ->route('school.index')
-            ->with('success','Sekolah berhasil dihapus.');
+            ->with('success', 'Sekolah berhasil dihapus.');
     }
 
-    
-    public function updateSchoolPage(Request $request) {
+
+    public function updateSchoolPage(Request $request)
+    {
         $school = School::find($request->user()->school_id)->first();
         return view('school-me-form', ['title' => 'Edit Sekolah', 'school' => $school]);
     }
 
-    public function updateSchoolAction(Request $request) {
+    public function updateSchoolAction(Request $request)
+    {
         $school = School::find($request->user()->school_id)->first();
-        $request->validate([
+        $validateData = $request->validate([
             'name' => 'required|max:100',
             'clock_in' => 'required|date_format:H:i',
             'clock_out' => 'required|date_format:H:i',
             'lat' => 'required|numeric',
             'lng' => 'required|numeric',
-            'distance' => 'required|numeric'
+            'distance' => 'required|numeric',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ], [
             'name.required' => 'Nama tidak boleh kosong.',
             'name.max' => 'Nama maksimal 100 karakter.',
@@ -116,13 +145,21 @@ class SchoolController extends Controller
             'lng.required' => 'Longitude tidak boleh kosong.',
             'lng.numeric' => 'Longitude tidak valid.',
             'distance.required' => 'Jarak tidak boleh kosong.',
-            'distance.numeric' => 'Jarak tidak valid.' 
+            'distance.numeric' => 'Jarak tidak valid.',
+            'image.image' => 'Logo tidak valid.',
+            'image.mimes' => 'File bukan gambar.',
+            'image.max' => 'Logo maksimal 2 MB.'
         ]);
 
-        $school->update($request->all());
+        if ($request->image != null) {
+            $imageName = uniqid() . time() . '.' . $request->image->extension();
+            $request->image->move(public_path('images'), $imageName);
+            $validateData['image'] = $imageName;
+        }
+
+        $school->update($validateData);
 
         return redirect('/me/school')
-            ->with('success','Sekolah berhasil disimpan.');
+            ->with('success', 'Sekolah berhasil disimpan.');
     }
-
 }

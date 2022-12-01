@@ -129,8 +129,11 @@
             <div class="dropdown d-inline-block">
                 <button type="button" class="btn header-item user text-start d-flex align-items-center" id="page-header-user-dropdown-v"
                     data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <img class="rounded-circle header-profile-user" src="/assets/images/users/avatar-3.jpg"
-                    alt="Header Avatar">
+                    @if (auth()->user()->image != null && auth()->user()->image != "")
+                    <img class="rounded-circle header-profile-user" src="/images/{{auth()->user()->image}}" alt="Header Avatar">
+                    @else
+                    <img class="rounded-circle header-profile-user" src="/assets/images/default-user.png" alt="Header Avatar">                        
+                    @endif
                     <span class="d-none d-xl-inline-block ms-2 fw-medium font-size-15">{{auth()->user()->name}}</span>
                 </button>
                 <div class="dropdown-menu dropdown-menu-end pt-0">

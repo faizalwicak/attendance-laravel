@@ -10,7 +10,7 @@ class School extends Model
     use HasFactory;
 
     protected $fillable = [
-        'name', 'lat', 'lng', 'distance', 'clock_in', 'clock_out'
+        'name', 'lat', 'lng', 'distance', 'clock_in', 'clock_out', 'image'
     ];
 
     public function grades()
