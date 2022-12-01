@@ -25,7 +25,8 @@ class LeaveController extends Controller
         $data = $request->validate([
             'type' => 'required|in:SICK,LEAVE',
             'description' => 'required|max:255',
-            'date' => 'required|date'
+            'date' => 'required|date',
+            'file' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ], [
             'type.required' => 'Jenis izin tidak boleh kosong.',
             'type.in' => 'Jenis izin tidak valid.',
@@ -33,6 +34,10 @@ class LeaveController extends Controller
             'description.max' => 'Keterangan maksimal 255 karaketer.',
             'date.required' => 'Tanggal tidak boleh kosong.',
             'date.date' => 'Tanggal tidak valid.',
+            'file.required' => 'Foto tidak boleh kosong.',
+            'file.image' => 'Foto tidak valid.',
+            'file.mimes' => 'Foto tidak valid.',
+            'file.max' => 'Foto maksimal 2 MB.'
         ]);
 
         $record = Record::where('date', $data['date'])
@@ -40,11 +45,8 @@ class LeaveController extends Controller
             ->where('is_leave', 1)
             ->first();
 
-        // $record->leave()->update(['description' => 'adsf']);
-        // return response()->json(['message' => $record->leave()], 422);
-
         if ($record) {
-            return response()->json(['message' => 'Izin pada tanggal ' . $data['date'] . ' telah ada.'], 422);
+            return response()->json(['message' => 'Izin pada tanggal ' . date('d-m-Y', strtotime($data['date'])) . ' telah ada.'], 422);
         }
 
         $record = Record::where('date', $data['date'])
@@ -63,6 +65,12 @@ class LeaveController extends Controller
             ]);
         }
 
+        if ($data['file'] != null) {
+            $fileName = auth()->user()->username . '_' . time() . '.' . $data['file']->extension();
+            $data['file']->move(public_path('images/leave'), $fileName);
+            $data['file'] = $fileName;
+        }
+
         $leave = Leave::where('record_id', $record->id)->first();
 
         if ($leave) {
@@ -70,6 +78,7 @@ class LeaveController extends Controller
                 'type' => $data['type'],
                 'description' => $data['description'],
                 'leave_status' => 'WAITING',
+                'file' => $data['file'],
             ]);
         } else {
             Leave::create([
@@ -77,6 +86,7 @@ class LeaveController extends Controller
                 'type' => $data['type'],
                 'description' => $data['description'],
                 'leave_status' => 'WAITING',
+                'file' => $data['file'],
             ]);
         }
 

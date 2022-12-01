@@ -18,14 +18,6 @@ new gridjs.Grid({
   columns:
     [
         {
-            name: 'Logo',
-            sort: false,
-            formatter: (function (cell) {
-                return gridjs.html('<img src="/assets/images/logo-dark-sm.png" alt="" class="avatar-sm rounded-circle me-2" />');
-            }),
-            width: '50px',
-          },
-        {
             name: 'Nama',
         },
         {
@@ -61,7 +53,7 @@ new gridjs.Grid({
   search: true,
   data: [
     @foreach($grades as $grade)
-    ["", "{{ $grade->name }}", "{{ $grade->grade }}", ["{{ $grade->id }}", "{{ $grade->name }}"]],
+    ["{{ $grade->name }}", "{{ $grade->grade }}", ["{{ $grade->id }}", "{{ $grade->name }}"]],
     @endforeach
   ]
 }).render(document.getElementById("table-data"));

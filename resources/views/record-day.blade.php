@@ -27,7 +27,10 @@ new gridjs.Grid({
             name: 'Logo',
             sort: false,
             formatter: (function (cell) {
-                return gridjs.html('<img src="/assets/images/logo-dark-sm.png" alt="" class="avatar-sm rounded-circle me-2" />');
+              if (cell != "") {
+                return gridjs.html(`<img src="/images/${cell}" alt="" class="avatar-sm rounded-circle me-2" />`);
+              }
+              return gridjs.html('<img src="/assets/images/default-user.png" alt="" class="avatar-sm rounded-circle me-2" />');
             }),
             width: '50px',
         },
@@ -107,7 +110,7 @@ new gridjs.Grid({
   search: true,
   data: [
     @foreach($users as $user)
-    ["", "{{ $user->username }}", "{{ $user->name }}", "{{ $user->gender == 'MALE' ? 'L' : 'P' }}", "{{ count($user->records) > 0 ? $user->records[0]->is_leave : '' }}", "{{ count($user->records) > 0 ? $user->records[0]->is_leave ? $user->records[0]->leave->type : $user->records[0]->attend->clock_in_status : '' }}", "{{count($user->records) > 0 && $user->records[0]->attend ? $user->records[0]->attend->clock_in_time : "-"}}", "{{ count($user->records) > 0 && $user->records[0]->attend ? $user->records[0]->attend->clock_out_time : "-"}}", "{{ count($user->records) > 0 ? $user->records[0]->id : '' }}"],
+    ["{{ $user->image }}", "{{ $user->username }}", "{{ $user->name }}", "{{ $user->gender == 'MALE' ? 'L' : 'P' }}", "{{ count($user->records) > 0 ? $user->records[0]->is_leave : '' }}", "{{ count($user->records) > 0 ? $user->records[0]->is_leave ? $user->records[0]->leave->type : $user->records[0]->attend->clock_in_status : '' }}", "{{count($user->records) > 0 && $user->records[0]->attend ? $user->records[0]->attend->clock_in_time : "-"}}", "{{ count($user->records) > 0 && $user->records[0]->attend ? $user->records[0]->attend->clock_out_time : "-"}}", "{{ count($user->records) > 0 ? $user->records[0]->id : '' }}"],
     @endforeach
   ],
   pagination: {

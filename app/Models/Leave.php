@@ -15,6 +15,7 @@ class Leave extends Model
         'type',
         'description',
         'leave_status',
+        'file',
     ];
 
     public function record()

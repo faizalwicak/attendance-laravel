@@ -27,7 +27,10 @@ new gridjs.Grid({
             name: 'Logo',
             sort: false,
             formatter: (function (cell) {
-                return gridjs.html('<img src="/assets/images/logo-dark-sm.png" alt="" class="avatar-sm rounded-circle me-2" />');
+              if (cell != "" && cell != null) {
+                return gridjs.html(`<img src="/images/${cell}" alt="" class="avatar-sm rounded-circle me-2" />`);
+              }
+              return gridjs.html('<img src="/assets/images/default-user.png" alt="" class="avatar-sm rounded-circle me-2" />');
             }),
             width: '50px',
         },
@@ -95,7 +98,7 @@ new gridjs.Grid({
   search: true,
   data: [
     @foreach($leaves as $leave)
-    ["", "{{$leave->record->user->username}}", "{{$leave->record->user->name}}", "{{$leave->record->user->gender == 'MALE' ? 'L' : 'P'}}", "{{$leave->record->user->grade->name}}", "{{$leave->type}}", "{{$leave->leave_status}}", ["{{$leave->record_id}}", "{{$leave->leave_status}}"]],
+    ["{{$leave->record->user->image}}", "{{$leave->record->user->username}}", "{{$leave->record->user->name}}", "{{$leave->record->user->gender == 'MALE' ? 'L' : 'P'}}", "{{$leave->record->user->grade->name}}", "{{$leave->type}}", "{{$leave->leave_status}}", ["{{$leave->record_id}}", "{{$leave->leave_status}}"]],
     @endforeach
   ],
   pagination: {

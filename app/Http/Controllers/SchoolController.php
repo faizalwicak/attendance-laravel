@@ -57,7 +57,6 @@ class SchoolController extends Controller
         return redirect()
             ->route('school.index')
             ->with('success', 'Sekolah berhasil dibuat.');
-        // return back()->with('success', $validateData['image']->path());
     }
 
     public function edit(School $school)

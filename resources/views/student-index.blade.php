@@ -24,7 +24,7 @@ new gridjs.Grid({
                 if (cell != "") {
                     return gridjs.html(`<img src="/images/${cell}" alt="" class="avatar-sm rounded-circle me-2" />`);
                 }
-                return gridjs.html('<img src="/assets/images/logo-dark-sm.png" alt="" class="avatar-sm rounded-circle me-2" />');
+                return gridjs.html('<img src="/assets/images/default-user.png" alt="" class="avatar-sm rounded-circle me-2" />');
             }),
             width: '80px',
         },

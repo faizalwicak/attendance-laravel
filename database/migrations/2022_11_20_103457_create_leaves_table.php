@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('type', 10); // SICK / LEAVE
             $table->string('description', 255);
             $table->string('leave_status', 10); // WAITING / ACCEPT / REJECT
+            $table->string('file', 100)->nullable();
             $table->timestamps();
         });
     }

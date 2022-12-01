@@ -24,6 +24,7 @@ Route::post('/login', [LoginController::class, 'login']);
 
 Route::group(['middleware' => 'auth:api'], function () {
     Route::get('/profile', [ProfileController::class, 'profile']);
+    Route::post('/profile-image', [ProfileController::class, 'updatePicture']);
     Route::get('/school', [ProfileController::class, 'school']);
     Route::get('/grade', [ProfileController::class, 'grade']);
 

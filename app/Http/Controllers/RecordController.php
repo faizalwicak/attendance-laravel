@@ -82,7 +82,7 @@ class RecordController extends Controller
 
         $userArray = [];
         foreach ($users as $u) {
-            $a = ["", $u->username, $u->name, $u->gender == "MALE" ? "L" : "P"];
+            $a = [$u->image != null ? $u->image : "", $u->username, $u->name, $u->gender == "MALE" ? "L" : "P"];
             foreach ($dateString as $d) {
                 array_push($a, "A");
             }
@@ -118,7 +118,6 @@ class RecordController extends Controller
             array_push($userArray, $a);
         }
 
-        // return response()->json($userArray);
         $params = [
             'title' => "Laporan Bulanan",
             'users' => $users,
@@ -129,7 +128,7 @@ class RecordController extends Controller
             'selectedMonth' => $selectedMonth
         ];
 
-        return view('record', $params);
+        return view('record-month', $params);
     }
 
     public function records_day(Request $request)
