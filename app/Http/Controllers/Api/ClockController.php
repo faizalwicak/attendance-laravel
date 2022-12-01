@@ -63,7 +63,7 @@ class ClockController extends Controller
             ->where('user_id', auth()->user()->id)
             ->first();
 
-        if ($record && $record->attend->clock_in_time != null) {
+        if ($record && $record->attend && $record->attend->clock_in_time != null) {
             return response()->json(['message' => 'Anda sudah absen masuk.'], 422);
         }
 

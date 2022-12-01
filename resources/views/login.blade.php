@@ -102,7 +102,7 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="text-center p-4">
-                            <p>© <script>document.write(new Date().getFullYear())</script> webadmin. Crafted with <i class="mdi mdi-heart text-danger"></i> by Themesdesign</p>
+                            {{-- <p>© <script>2022</script> SMAN 1 Sleman</p> --}}
                         </div>
                     </div>
                 </div>

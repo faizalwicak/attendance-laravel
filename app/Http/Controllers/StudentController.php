@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\ExportStudent;
+use App\Imports\StudentsImport;
 use App\Models\Grade;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Maatwebsite\Excel\Facades\Excel;
 
 class StudentController extends Controller
 {
@@ -187,5 +190,32 @@ class StudentController extends Controller
 
         return redirect('/grade/' . $user->grade_id . '/student')
             ->with('success', 'Siswa berhasil dihapus.');
+    }
+
+    public function importStudent()
+    {
+        return view('student-import', ['title' => 'Import Siswa',]);
+    }
+
+    public function importStudentAction(Request $request)
+    {
+        $validateData = $request->validate([
+            'file' => 'required|mimes:xls,xlsx|max:2048',
+        ], [
+            'file.required' => 'File tidak boleh kosong.',
+            'file.mimes' => 'File tidak valid.',
+            'file.max' => 'File maksimal 2 MB.'
+        ]);
+
+        // return back();
+        Excel::import(new StudentsImport, $validateData['file']);
+
+        return redirect('/student')
+            ->with('success', 'Siswa berhasil diimport.');
+    }
+
+    public function exportStudent(Request $request)
+    {
+        return Excel::download(new ExportStudent, 'students.xlsx');
     }
 }

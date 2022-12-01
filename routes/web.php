@@ -72,6 +72,10 @@ Route::group(['middleware' => ['auth']], function () {
         Route::put('/student/{id}', [StudentController::class, 'update']);
         Route::delete('/student/{id}', [StudentController::class, 'destroy']);
 
+        Route::get('/student/import', [StudentController::class, 'importStudent']);
+        Route::post('/student/importAction', [StudentController::class, 'importStudentAction']);
+        // Route::get('/student/export', [StudentController::class, 'exportStudent']);
+
         Route::get('/quote', [QuoteController::class, 'index']);
         Route::get('/quote/create', [QuoteController::class, 'create']);
         Route::post('/quote/store', [QuoteController::class, 'store']);

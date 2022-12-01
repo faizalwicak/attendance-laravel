@@ -10,14 +10,15 @@ use Illuminate\Support\Facades\Hash;
 
 class LoginController extends Controller
 {
-    public function login(Request $request) {
+    public function login(Request $request)
+    {
         $data = $request->validate([
             'username' => 'required|exists:users,username',
             'password' => 'required',
         ], [
-            'username.require' => 'Username tidak boleh kosong.',
+            'username.required' => 'Username tidak boleh kosong.',
             'username.exists' => 'Username tidak ditemukan.',
-            'password.require' => 'Password tidak boleh kosong.'
+            'password.required' => 'Password tidak boleh kosong.'
         ]);
         if (!$token = Auth::guard('api')->attempt($data)) {
             return response()->json(['message' => 'Password salah.'], 422);
@@ -31,9 +32,10 @@ class LoginController extends Controller
         ]);
     }
 
-    public function changePassword(Request $request) {
+    public function changePassword(Request $request)
+    {
         $user = User::findOrFail(Auth::user()->id);
-        
+
         $validateData = $request->validate([
             'old-password' => ['required', function ($attribute, $value, $fail) {
                 if (!Hash::check($value, Auth::user()->password)) {
@@ -51,7 +53,7 @@ class LoginController extends Controller
         ]);
 
         $validateData['password'] = Hash::make($validateData['password']);
- 
+
         $user->update($validateData);
 
         return response()->json([

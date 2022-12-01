@@ -105,8 +105,9 @@ document.getElementById("select-grade").addEventListener('change', function () {
                                 
                             </div>
                             <div class="col-sm">
-                                <div class="mt-3 mt-md-0 mb-3">
-                                    <a href="/student/create" class="btn btn-success btn-rounded waves-effect waves-light mb-2 me-2"><i class="mdi mdi-plus me-1"></i> Tambah Siswa</a>
+                                <div class="btn-group">
+                                    <a href="/student/create" class="btn btn-success btn-rounded waves-effect waves-light mb-2 me-1"><i class="mdi mdi-plus me-1"></i> Tambah Siswa</a>
+                                    <a href="/student/import" class="btn btn-success btn-rounded waves-effect waves-light mb-2 me-1"><i class="mdi mdi-import me-1"></i> Import Siswa</a>
                                 </div>
                             </div>
                         </div>
