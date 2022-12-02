@@ -26,7 +26,7 @@ new gridjs.Grid({
                 }
                 return gridjs.html('<img src="/assets/images/default-school.png" alt="" class="avatar-sm rounded-circle me-2" />');
             }),
-            width: '50px',
+            width: '80px',
         },
         {
             name: 'Nama',

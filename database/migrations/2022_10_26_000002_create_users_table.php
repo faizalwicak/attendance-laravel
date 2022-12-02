@@ -21,7 +21,7 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password', 100);
             $table->string('image', 100)->nullable();
-            $table->string('role', 10);
+            $table->string('role', 10); // SUPERADMIN / ADMIN / OPPERATOR / USER
             $table->unsignedBigInteger('school_id')->nullable();
             $table->foreign('school_id')
                 ->references('id')
@@ -33,6 +33,7 @@ return new class extends Migration
                 ->on('grades')
                 ->onDelete('cascade');
             $table->string('gender', 6)->nullable(); // MALE / FEMALE
+            $table->string('device_id', 100)->unique()->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

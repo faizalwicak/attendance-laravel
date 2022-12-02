@@ -71,6 +71,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/student/{id}/edit', [StudentController::class, 'edit']);
         Route::put('/student/{id}', [StudentController::class, 'update']);
         Route::delete('/student/{id}', [StudentController::class, 'destroy']);
+        Route::post('/student/{id}/reset-device', [StudentController::class, 'resetDevice']);
 
         Route::get('/student/import', [StudentController::class, 'importStudent']);
         Route::post('/student/importAction', [StudentController::class, 'importStudentAction']);

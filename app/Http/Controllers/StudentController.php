@@ -218,4 +218,17 @@ class StudentController extends Controller
     {
         return Excel::download(new ExportStudent, 'students.xlsx');
     }
+
+    public function resetDevice($id)
+    {
+        $user = User::findOrFail($id);
+
+        if ($user->school_id != Auth::user()->school_id || $user->role != 'USER') return abort(403);
+
+        $user->device_id = null;
+        $user->save();
+
+        return redirect('/grade/' . $user->grade_id . '/student')
+            ->with('success', 'Device berhasil direset.');
+    }
 }

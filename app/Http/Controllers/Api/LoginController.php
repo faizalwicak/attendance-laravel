@@ -15,17 +15,39 @@ class LoginController extends Controller
         $data = $request->validate([
             'username' => 'required|exists:users,username',
             'password' => 'required',
+            'device_id' => 'required'
         ], [
             'username.required' => 'Username tidak boleh kosong.',
             'username.exists' => 'Username tidak ditemukan.',
-            'password.required' => 'Password tidak boleh kosong.'
+            'password.required' => 'Password tidak boleh kosong.',
+            'device_id.required' => 'Device Id tidak boleh kosong.'
         ]);
-        if (!$token = Auth::guard('api')->attempt($data)) {
+
+        $user = User::where('username', $data['username'])
+            ->where('role', 'USER')
+            ->first();
+
+        if (!$user) {
+            return response()->json(['message' => 'User tidak ditemukan.'], 422);
+        }
+
+        if ($user->device_id != null && $user->device_id != "" && $user->device_id != $data['device_id']) {
+            return response()->json(['message' => 'User sudah login di perangkat lain.'], 422);
+        }
+
+        $userDevice = User::where('device_id', $data['device_id'])->first();
+
+        if ($userDevice != null && $userDevice->id != $user->id) {
+            return response()->json(['message' => 'Perangkat sudah digunakan oleh user lain.'], 422);
+        }
+
+        if (!Hash::check($data['password'], $user->password)) {
             return response()->json(['message' => 'Password salah.'], 422);
         }
-        if (Auth::guard('api')->user()->role != 'USER') {
-            return response()->json(['message' => 'Username tidak ditemukan.'], 422);
-        }
+
+        $token = Auth::guard('api')->login($user);
+        $user->update(['device_id' => $data['device_id']]);
+
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer'
