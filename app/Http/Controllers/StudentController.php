@@ -7,7 +7,6 @@ use App\Imports\StudentsImport;
 use App\Models\Grade;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -95,7 +94,7 @@ class StudentController extends Controller
         $validateData['username'] = preg_replace('/\s*/', '', $validateData['username']);
         $validateData['username'] = strtolower($validateData['username']);
 
-        $validateData['school_id'] = Auth::user()->school_id;
+        $validateData['school_id'] = auth()->user()->school_id;
 
         $validateData['role'] = 'USER';
         $validateData['password'] = Hash::make($validateData['password']);
@@ -115,7 +114,7 @@ class StudentController extends Controller
     public function edit($id)
     {
         $user = User::findOrFail($id);
-        if ($user->school_id != Auth::user()->school_id || $user->role != 'USER') {
+        if ($user->school_id != auth()->user()->school_id || $user->role != 'USER') {
             return abort(403);
         }
 
@@ -129,7 +128,7 @@ class StudentController extends Controller
     public function update(Request $request, $id)
     {
         $user = User::findOrFail($id);
-        if ($user->school_id != Auth::user()->school_id || $user->role != 'USER') {
+        if ($user->school_id != auth()->user()->school_id || $user->role != 'USER') {
             return abort(403);
         }
         $validateData = $request->validate([
@@ -183,7 +182,7 @@ class StudentController extends Controller
     public function destroy($id)
     {
         $user = User::findOrFail($id);
-        if ($user->school_id != Auth::user()->school_id || $user->role != 'USER') {
+        if ($user->school_id != auth()->user()->school_id || $user->role != 'USER') {
             return abort(403);
         }
         $user->delete();
@@ -214,16 +213,11 @@ class StudentController extends Controller
             ->with('success', 'Siswa berhasil diimport.');
     }
 
-    public function exportStudent(Request $request)
-    {
-        return Excel::download(new ExportStudent, 'students.xlsx');
-    }
-
     public function resetDevice($id)
     {
         $user = User::findOrFail($id);
 
-        if ($user->school_id != Auth::user()->school_id || $user->role != 'USER') return abort(403);
+        if ($user->school_id != auth()->user()->school_id || $user->role != 'USER') return abort(403);
 
         $user->device_id = null;
         $user->save();

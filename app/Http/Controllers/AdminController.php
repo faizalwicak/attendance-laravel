@@ -207,8 +207,14 @@ class AdminController extends Controller
 
     public function operatorAccess($id)
     {
-        $user = User::where('id', $id)->where('school_id', auth()->user()->school_id)->with('grades')->first();
+        $user = User::where('id', $id)
+            ->where('school_id', auth()->user()->school_id)
+            ->where('role', 'OPERATOR')
+            ->with('grades')
+            ->first();
+
         if (!$user) return abort(404);
+
         $selectedGrades = [];
         foreach ($user->grades as $u) {
             array_push($selectedGrades, $u->id);
@@ -219,9 +225,13 @@ class AdminController extends Controller
 
     public function operatorAccessAction(Request $request, $id)
     {
-        $user = User::findOrFail($id);
+        $user = User::where('id', $id)
+            ->where('school_id', auth()->user()->school_id)
+            ->where('role', 'OPERATOR')
+            ->with('grades')
+            ->first();
 
-        if ($user->role != 'OPERATOR') return abort(403);
+        if (!$user) return abort(404);
 
         $validateRole = [
             'access' => 'nullable',
@@ -236,8 +246,8 @@ class AdminController extends Controller
 
         $validateData = $request->validate($validateRole, $validateMessage);
 
-        $user->grades()->sync(isset($validateData['access']) ? $validateData['access'] : []);
-        // return response()->json($validateData);
+        $user->grades()
+            ->sync(isset($validateData['access']) ? $validateData['access'] : []);
 
         return redirect('/admin')
             ->with('success', 'Akses berhasil disimpan.');

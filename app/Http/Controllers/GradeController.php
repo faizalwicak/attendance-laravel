@@ -9,16 +9,22 @@ use Illuminate\Support\Facades\Auth;
 
 class GradeController extends Controller
 {
-    public function index() {
-        $grades = Grade::where('school_id', Auth::user()->school_id)->orderBy('name')->get();
+    public function index()
+    {
+        $grades = Grade::where('school_id', Auth::user()->school_id)
+            ->orderBy('name')
+            ->get();
+
         return view('grade-index', ['title' => 'Daftar Kelas', 'grades' => $grades]);
     }
 
-    public function create() {
+    public function create()
+    {
         return view('grade-form', ['title' => 'Tambah Kelas', 'grade' => null]);
     }
 
-    public function store(Request $request) {
+    public function store(Request $request)
+    {
         $requestData = $request->validate([
             'name' => 'required|max:100',
             'grade' => 'required|numeric|in:10,11,12'
@@ -29,23 +35,25 @@ class GradeController extends Controller
             'grade.numeric' => 'Tingkatan tidak valid.',
             'grade.in' => 'Tingkatan tidak valid.'
         ]);
-        
+
         $requestData['school_id'] = Auth::user()->school_id;
         Grade::create($requestData);
 
         return redirect()
             ->route('grade.index')
-            ->with('success','Kelas berhasil dibuat.');
+            ->with('success', 'Kelas berhasil dibuat.');
     }
 
-    public function edit(Grade $grade) {
+    public function edit(Grade $grade)
+    {
         if ($grade->school_id != Auth::user()->school_id) {
             return abort(403);
         }
-        return view('grade-form', ['title' => 'Edit "'.$grade->name.'"', 'grade' => $grade]);
+        return view('grade-form', ['title' => 'Edit "' . $grade->name . '"', 'grade' => $grade]);
     }
 
-    public function update(Request $request, Grade $grade) {
+    public function update(Request $request, Grade $grade)
+    {
         if ($grade->school_id != Auth::user()->school_id) {
             return abort(403);
         }
@@ -64,19 +72,19 @@ class GradeController extends Controller
 
         return redirect()
             ->route('grade.index')
-            ->with('success','Kelas berhasil disimpan.');
+            ->with('success', 'Kelas berhasil disimpan.');
     }
 
     public function destroy(Grade $grade)
-    {   
+    {
         if ($grade->school_id != Auth::user()->school_id) {
             return abort(403);
         }
-        
+
         $grade->delete();
-       
+
         return redirect()
             ->route('grade.index')
-            ->with('success','Kelas berhasil dihapus.');
+            ->with('success', 'Kelas berhasil dihapus.');
     }
 }

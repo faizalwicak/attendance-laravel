@@ -33,92 +33,118 @@
             <!-- Left Menu Start -->
             <ul class="metismenu list-unstyled" id="side-menu">
                 <li class="menu-title" data-key="t-menu">Dashboard</li>
-                
-                @if(auth()->user()->role == 'SUPERADMIN')
-                <li>
-                    <a href="/school">
-                        <i class="bx bxs-school icon nav-icon"></i>
-                        <span class="menu-item" data-key="t-school">Sekolah</span>
-                    </a>
-                </li>
-                
-                <li>
-                    <a href="/admin">
-                        <i class="bx bxs-group icon nav-icon"></i>
-                        <span class="menu-item" data-key="t-calendar">Admin</span>
-                    </a>
-                </li>
-                @endif
 
-                @if(auth()->user()->role == 'ADMIN')
-                <li>
-                    <a href="/overview">
-                        <i class="bx bxs-home icon nav-icon"></i>
-                        <span class="menu-item" data-key="t-calendar">Beranda</span>
-                    </a>
-                </li>
+                @if (auth()->user()->role == 'SUPERADMIN')
+                    <li>
+                        <a href="/school">
+                            <i class="bx bxs-school icon nav-icon"></i>
+                            <span class="menu-item" data-key="t-school">Sekolah</span>
+                        </a>
+                    </li>
 
-                <li>
-                    <a href="/record/leave">
-                        <i class="bx bxs-report icon nav-icon"></i>
-                        <span class="menu-item" data-key="t-calendar">Izin</span>
-                    </a>
-                </li>
+                    <li>
+                        <a href="/admin">
+                            <i class="bx bxs-group icon nav-icon"></i>
+                            <span class="menu-item" data-key="t-calendar">Admin</span>
+                        </a>
+                    </li>
+                @elseif(auth()->user()->role == 'ADMIN')
+                    <li>
+                        <a href="/overview">
+                            <i class="bx bxs-home icon nav-icon"></i>
+                            <span class="menu-item" data-key="t-calendar">Beranda</span>
+                        </a>
+                    </li>
 
-                <li>
-                    <a href="/record/day">
-                        <i class="bx bxs-report icon nav-icon"></i>
-                        <span class="menu-item" data-key="t-school">Laporan Harian</span>
-                    </a>
-                </li>
+                    <li>
+                        <a href="/record/leave">
+                            <i class="bx bxs-report icon nav-icon"></i>
+                            <span class="menu-item" data-key="t-calendar">Izin</span>
+                        </a>
+                    </li>
 
-                <li>
-                    <a href="/record/month">
-                        <i class="bx bxs-report icon nav-icon"></i>
-                        <span class="menu-item" data-key="t-school">Laporan Bulanan</span>
-                    </a>
-                </li>
+                    <li>
+                        <a href="/record/day">
+                            <i class="bx bxs-report icon nav-icon"></i>
+                            <span class="menu-item" data-key="t-school">Laporan Harian</span>
+                        </a>
+                    </li>
 
-                <li>
-                    <a href="/me/school">
-                        <i class="bx bxs-school icon nav-icon"></i>
-                        <span class="menu-item" data-key="t-calendar">Sekolah</span>
-                    </a>
-                </li>
+                    <li>
+                        <a href="/record/month">
+                            <i class="bx bxs-report icon nav-icon"></i>
+                            <span class="menu-item" data-key="t-school">Laporan Bulanan</span>
+                        </a>
+                    </li>
 
-                <li>
-                    <a href="/event">
-                        <i class="bx bxs-calendar icon nav-icon"></i>
-                        <span class="menu-item" data-key="t-calendar">Event</span>
-                    </a>
-                </li>
+                    <li>
+                        <a href="/me/school">
+                            <i class="bx bxs-school icon nav-icon"></i>
+                            <span class="menu-item" data-key="t-calendar">Sekolah</span>
+                        </a>
+                    </li>
 
-                <li>
-                    <a href="/admin">
-                        <i class="bx bxs-group icon nav-icon"></i>
-                        <span class="menu-item" data-key="t-calendar">Admin</span>
-                    </a>
-                </li>
+                    <li>
+                        <a href="/event">
+                            <i class="bx bxs-calendar icon nav-icon"></i>
+                            <span class="menu-item" data-key="t-calendar">Event</span>
+                        </a>
+                    </li>
 
-                <li>
-                    <a href="/quote">
-                        <i class="bx bxs-message-rounded-dots icon nav-icon"></i>
-                        <span class="menu-item" data-key="t-calendar">Quote</span>
-                    </a>
-                </li>
-                
-                <li>
-                    <a href="/grade">
-                        <i class="bx bxs-buildings icon nav-icon"></i>
-                        <span class="menu-item" data-key="t-calendar">Kelas</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="/student">
-                        <i class="bx bxs-graduation nav-icon"></i>
-                        <span class="menu-item" data-key="t-calendar">Siswa</span>
-                    </a>
-                </li>
+                    <li>
+                        <a href="/admin">
+                            <i class="bx bxs-group icon nav-icon"></i>
+                            <span class="menu-item" data-key="t-calendar">Admin</span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="/quote">
+                            <i class="bx bxs-message-rounded-dots icon nav-icon"></i>
+                            <span class="menu-item" data-key="t-calendar">Quote</span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="/grade">
+                            <i class="bx bxs-buildings icon nav-icon"></i>
+                            <span class="menu-item" data-key="t-calendar">Kelas</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/student">
+                            <i class="bx bxs-graduation nav-icon"></i>
+                            <span class="menu-item" data-key="t-calendar">Siswa</span>
+                        </a>
+                    </li>
+                @elseif(auth()->user()->role == 'OPERATOR')
+                    <li>
+                        <a href="/overview">
+                            <i class="bx bxs-home icon nav-icon"></i>
+                            <span class="menu-item" data-key="t-calendar">Beranda</span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="/record/leave">
+                            <i class="bx bxs-report icon nav-icon"></i>
+                            <span class="menu-item" data-key="t-calendar">Izin</span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="/record/day">
+                            <i class="bx bxs-report icon nav-icon"></i>
+                            <span class="menu-item" data-key="t-school">Laporan Harian</span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="/record/month">
+                            <i class="bx bxs-report icon nav-icon"></i>
+                            <span class="menu-item" data-key="t-school">Laporan Bulanan</span>
+                        </a>
+                    </li>
                 @endif
 
             </ul>

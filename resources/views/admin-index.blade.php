@@ -26,11 +26,9 @@
                         );
                     }),
                     width: '80px',
-                },
-                {
+                }, {
                     name: 'Username',
-                },
-                {
+                }, {
                     name: 'Nama',
                 },
                 @if (auth()->user()->role == 'SUPERADMIN')
@@ -42,6 +40,12 @@
                     {
                         name: 'ROLE',
                         width: '200px',
+                    }, {
+                        name: 'Akses',
+                        sort: false,
+                        formatter: function(cell) {
+                            return gridjs.html(cell.join("<br>"));
+                        }
                     },
                 @endif {
                     name: "Action",
@@ -75,8 +79,14 @@
             data: [
                 @foreach ($users as $user)
                     ["{{ $user->image }}", "{{ $user->username }}", "{{ $user->name }}",
-                        "{{ auth()->user()->role == 'SUPERADMIN' ? $user->school->name : $user->role }}", [
-                            "{{ $user->id }}", "{{ $user->role }}"
+                        "{{ auth()->user()->role == 'SUPERADMIN' ? $user->school->name : $user->role }}",
+                        [
+                            @foreach ($user->grades as $g)
+                                "<span class='badge badge-soft-primary'>{{ $g->name }}</span>",
+                            @endforeach
+                        ],
+                        [
+                            "{{ $user->id }}", "{{ $user->role }}",
                         ]
                     ],
                 @endforeach
@@ -90,27 +100,23 @@
         <div class="col-lg-12">
             <div class="card">
                 <div class="card-body">
-
                     <div class="position-relative">
                         <div class="modal-button mt-2">
                             <div class="row align-items-start">
-                                <div class="col-sm-auto">
-
-                                </div>
+                                <div class="col-sm-auto"></div>
                                 <div class="col-sm">
                                     <div class="mt-3 mt-md-0 mb-3">
                                         <a href="/admin/create"
-                                            class="btn btn-success btn-rounded waves-effect waves-light mb-2 me-2"><i
-                                                class="mdi mdi-plus me-1"></i> Tambah Admin</a>
+                                            class="btn btn-success btn-rounded waves-effect waves-light mb-2 me-2">
+                                            <i class="mdi mdi-plus me-1"></i> Tambah Admin
+                                        </a>
                                     </div>
                                 </div>
                             </div>
                             <!-- end row -->
                         </div>
                     </div>
-
                     <div id="table-data"></div>
-
                 </div>
                 <!-- end card body -->
             </div>

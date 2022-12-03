@@ -16,35 +16,35 @@ class RecordController extends Controller
     public function records_month(Request $request)
     {
 
-        $gradeId = $request->get('grade');
-        $selectedMonth = $request->get('month');
+        $selectedGrade = $request->get('grade');
+        $selectedMonth = $request->get('month', date('Y-m'));
 
-        if ($gradeId == null) {
-            $grade = Grade::where('school_id', auth()->user()->school_id)
+        if (auth()->user()->role == 'ADMIN') {
+            $grades = Grade::where('school_id', auth()->user()->school_id)
                 ->orderBy('name')
-                ->first();
-
-            if (!$grade) {
-                return redirect('/grade')->with('warning', 'Kelas tidak ditemukan, buat kelas terlebih dahulu.');
-            }
+                ->get();
         } else {
-            $grade = Grade::where('id', $gradeId)
-                ->where('school_id', auth()->user()->school_id)
+            $user = User::find(auth()->user()->id);
+            $allowedGrades = $user->grades()->get();
+            $allowedGradesArr = [];
+            foreach ($allowedGrades as $g) {
+                array_push($allowedGradesArr, $g->id);
+            }
+
+            $grades = Grade::where('school_id', auth()->user()->school_id)
+                ->whereIn('id', $allowedGradesArr)
                 ->orderBy('name')
-                ->first();
-        }
+                ->get();
 
-        if ($selectedMonth == null) {
-            $selectedMonth = date('Y-m');
+            if ($selectedGrade != null && !in_array($selectedGrade, $allowedGradesArr)) {
+                $selectedGrade = null;
+            }
         }
-
-        $grades = Grade::where('school_id', auth()->user()->school_id)
-            ->orderBy('name')
-            ->get();
 
         $currentDate = new DateTime($selectedMonth . "-01");
 
         $holiday = Event::where('type', 'HOLIDAY')
+            ->where('school_id', auth()->user()->school_id)
             ->whereYear('date', $currentDate->format('Y'))
             ->whereMonth('date', $currentDate->format('m'))
             ->get();
@@ -69,16 +69,19 @@ class RecordController extends Controller
             $currentDate->modify('+1 day');
         }
 
-        $users = User::where('school_id', auth()->user()->school_id)
-            ->where('grade_id', $grade->id)
-            ->with([
-                'records' => function ($query) use ($dateString) {
-                    $query->whereIn('date', $dateString);
-                },
-                'records.attend',
-                'records.leave'
-            ])
-            ->get();
+        $users = [];
+        if ($selectedGrade != null) {
+            $users = User::where('school_id', auth()->user()->school_id)
+                ->where('grade_id', $selectedGrade)
+                ->with([
+                    'records' => function ($query) use ($dateString) {
+                        $query->whereIn('date', $dateString);
+                    },
+                    'records.attend',
+                    'records.leave'
+                ])
+                ->get();
+        }
 
         $userArray = [];
         foreach ($users as $u) {
@@ -124,7 +127,7 @@ class RecordController extends Controller
             'userArray' => $userArray,
             'grades' => $grades,
             'days' => $dateString,
-            'selectedGrade' => $grade,
+            'selectedGrade' => $selectedGrade,
             'selectedMonth' => $selectedMonth
         ];
 
@@ -134,49 +137,50 @@ class RecordController extends Controller
     public function records_day(Request $request)
     {
 
-        $gradeId = $request->get('grade');
-        $selectedDay = $request->get('day');
+        $selectedGrade = $request->get('grade');
+        $selectedDay = $request->get('day', date('Y-m-d'));
 
-        if ($gradeId == null) {
-            $grade = Grade::where('school_id', auth()->user()->school_id)
+        if (auth()->user()->role == 'ADMIN') {
+            $grades = Grade::where('school_id', auth()->user()->school_id)
                 ->orderBy('name')
-                ->first();
-
-            if (!$grade) {
-                return redirect('/grade')->with('warning', 'Kelas tidak ditemukan, buat kelas terlebih dahulu.');
-            }
+                ->get();
         } else {
-            $grade = Grade::where('id', $gradeId)
-                ->where('school_id', auth()->user()->school_id)
+            $user = User::find(auth()->user()->id);
+            $allowedGrades = $user->grades()->get();
+            $allowedGradesArr = [];
+            foreach ($allowedGrades as $g) {
+                array_push($allowedGradesArr, $g->id);
+            }
+
+            $grades = Grade::where('school_id', auth()->user()->school_id)
+                ->whereIn('id', $allowedGradesArr)
                 ->orderBy('name')
-                ->first();
+                ->get();
+
+            if ($selectedGrade != null && !in_array($selectedGrade, $allowedGradesArr)) {
+                $selectedGrade = null;
+            }
         }
 
-        if ($selectedDay == null) {
-            $selectedDay = date('Y-m-d');
+        $users = [];
+        if ($selectedGrade != null) {
+            $users = User::where('school_id', auth()->user()->school_id)
+                ->where('grade_id', $selectedGrade)
+                ->with([
+                    'records' => function ($query) use ($selectedDay) {
+                        $query->where('date', $selectedDay);
+                    },
+                    'records.attend',
+                    'records.leave'
+                ])
+                ->get();
         }
-
-
-        $users = User::where('school_id', auth()->user()->school_id)
-            ->where('grade_id', $grade->id)
-            ->with([
-                'records' => function ($query) use ($selectedDay) {
-                    $query->where('date', $selectedDay);
-                },
-                'records.attend',
-                'records.leave'
-            ])
-            ->get();
-
-        $grades = Grade::where('school_id', auth()->user()->school_id)
-            ->orderBy('name')
-            ->get();
 
         $params = [
             'title' => "Laporan Harian",
             'users' => $users,
             'grades' => $grades,
-            'selectedGrade' => $grade,
+            'selectedGrade' => $selectedGrade,
             'selectedDay' => $selectedDay
         ];
 
@@ -185,7 +189,32 @@ class RecordController extends Controller
 
     public function record_detail($id)
     {
-        $record = Record::where('id', $id)->with('user', 'leave', 'attend')->first();
+        if (auth()->user()->role == 'ADMIN') {
+            $record = Record::where('id', $id)
+                ->with('user', 'leave', 'attend')
+                ->whereHas('user', function ($query) {
+                    $query->where('school_id', auth()->user()->school_id);
+                })
+                ->first();
+        } else {
+            $user = User::find(auth()->user()->id);
+            $allowedGrades = $user->grades()->get();
+            $allowedGradesArr = [];
+            foreach ($allowedGrades as $g) {
+                array_push($allowedGradesArr, $g->id);
+            }
+
+            $record = Record::where('id', $id)
+                ->with('user', 'leave', 'attend')
+                ->whereHas('user', function ($query) {
+                    $query->where('school_id', auth()->user()->school_id);
+                })
+                ->whereHas('user', function ($query) use ($allowedGradesArr) {
+                    $query->whereIn('grade_id', $allowedGradesArr);
+                })
+                ->first();
+        }
+
         if (!$record) {
             return abort(404);
         }
@@ -205,9 +234,35 @@ class RecordController extends Controller
             $selectedDay = date('Y-m-d');
         }
 
-        $leaves = Leave::with(['record'])->whereHas('record', function ($query) use ($selectedDay) {
-            $query->where('date', $selectedDay);
-        })->get();
+        // $schoolId = auth()-
+        $leaves = [];
+        if (auth()->user()->role == 'ADMIN') {
+            $leaves = Leave::with('record', 'record.user')
+                ->whereHas('record', function ($query) use ($selectedDay) {
+                    $query->where('date', $selectedDay);
+                })
+                ->whereHas('record.user', function ($query) {
+                    $query->where('school_id', auth()->user()->school_id);
+                })
+                ->get();
+        } else {
+            $user = User::find(auth()->user()->id);
+            $allowedGrades = $user->grades()->get();
+            $allowedGradesArr = [];
+            foreach ($allowedGrades as $g) {
+                array_push($allowedGradesArr, $g->id);
+            }
+
+            $leaves = Leave::with(['record', 'record.user'])
+                ->whereHas('record', function ($query) use ($selectedDay) {
+                    $query->where('date', $selectedDay);
+                })
+                ->whereHas('record.user', function ($query) use ($allowedGradesArr) {
+                    $query->where('school_id', auth()->user()->school_id)
+                        ->whereIn('grade_id', $allowedGradesArr);
+                })
+                ->get();
+        }
 
         $params = [
             'title' => 'Daftar Izin',
@@ -227,7 +282,31 @@ class RecordController extends Controller
             'accept.boolean' => 'Status tidak valid.',
         ]);
 
-        $record = Record::where('id', $id)->with('user', 'leave', 'attend')->first();
+        if (auth()->user()->role == 'ADMIN') {
+            $record = Record::where('id', $id)
+                ->with('user', 'leave', 'attend')
+                ->whereHas('user', function ($query) {
+                    $query->where('school_id', auth()->user()->school_id);
+                })
+                ->first();
+            if (!$record || !$record->is_leave) return abort(404);
+        } else {
+            $user = User::find(auth()->user()->id);
+            $allowedGrades = $user->grades()->get();
+            $allowedGradesArr = [];
+            foreach ($allowedGrades as $g) {
+                array_push($allowedGradesArr, $g->id);
+            }
+
+            $record = Record::where('id', $id)
+                ->with('user', 'leave', 'attend')
+                ->whereHas('user', function ($query) use ($allowedGradesArr) {
+                    $query->where('school_id', auth()->user()->school_id)
+                        ->whereIn('grade_id', $allowedGradesArr);
+                })
+                ->first();
+        }
+
         if (!$record || !$record->is_leave) return abort(404);
 
         $record->leave()->update(['leave_status' => $validateData['accept'] ? 'ACCEPT' : 'REJECT']);

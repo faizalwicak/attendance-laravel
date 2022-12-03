@@ -3,14 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Models\Quote;
-use Barryvdh\Debugbar\Facades\Debugbar;
 use Illuminate\Http\Request;
 
 class QuoteController extends Controller
 {
     public function index()
     {
-        $quotes = Quote::where('school_id', auth()->user()->school_id)->orderBy('created_at', 'DESC')->get();
+        $quotes = Quote::where('school_id', auth()->user()->school_id)
+            ->orderBy('created_at', 'DESC')
+            ->get();
 
         return view('quote-index', ['title' => 'Daftar Quote', 'quotes' => $quotes]);
     }
@@ -44,7 +45,10 @@ class QuoteController extends Controller
 
     public function edit($id)
     {
-        $quote = Quote::where('id', $id)->where('school_id', auth()->user()->school_id)->first();
+        $quote = Quote::where('id', $id)
+            ->where('school_id', auth()->user()->school_id)
+            ->first();
+
         if (!$quote) {
             return abort(404);
         }
@@ -53,7 +57,10 @@ class QuoteController extends Controller
 
     public function update(Request $request, $id)
     {
-        $quote = Quote::where('id', $id)->where('school_id', auth()->user()->school_id)->first();
+        $quote = Quote::where('id', $id)
+            ->where('school_id', auth()->user()->school_id)
+            ->first();
+
         if (!$quote) {
             return abort(404);
         }
@@ -80,7 +87,10 @@ class QuoteController extends Controller
 
     public function destroy($id)
     {
-        $quote = Quote::where('id', $id)->where('school_id', auth()->user()->school_id)->first();
+        $quote = Quote::where('id', $id)
+            ->where('school_id', auth()->user()->school_id)
+            ->first();
+
         if (!$quote) {
             return abort(404);
         }

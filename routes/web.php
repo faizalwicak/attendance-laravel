@@ -3,7 +3,6 @@
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\SchoolController;
 use App\Http\Controllers\GradeController;
@@ -41,10 +40,6 @@ Route::post('/login', [LoginController::class, 'actionLogin'])->name('login');
 
 Route::group(['middleware' => ['auth']], function () {
     Route::get('/logout', [LoginController::class, 'actionLogout'])->name('logout');
-    // Route::get('/home', [HomeController::class, 'index'])->name('home');
-
-    Route::get('/absent/{id}/accept', [HomeController::class, 'accept']);
-    Route::get('/absent/{id}/decline', [HomeController::class, 'decline']);
 
     Route::group(['middleware' => ['role:SUPERADMIN']], function () {
         Route::resource('/school', SchoolController::class);
@@ -75,7 +70,6 @@ Route::group(['middleware' => ['auth']], function () {
 
         Route::get('/student/import', [StudentController::class, 'importStudent']);
         Route::post('/student/importAction', [StudentController::class, 'importStudentAction']);
-        // Route::get('/student/export', [StudentController::class, 'exportStudent']);
 
         Route::get('/quote', [QuoteController::class, 'index']);
         Route::get('/quote/create', [QuoteController::class, 'create']);
@@ -84,15 +78,16 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/quote/{id}/edit', [QuoteController::class, 'edit']);
         Route::put('/quote/{id}', [QuoteController::class, 'update']);
 
-        Route::get('/overview', [OverviewController::class, 'index']);
+        Route::resource('/event', EventController::class);
+    });
 
+    Route::group(['middleware' => ['role:ADMIN,OPERATOR']], function () {
+        Route::get('/overview', [OverviewController::class, 'index']);
         Route::get('/record/month', [RecordController::class, 'records_month']);
         Route::get('/record/day', [RecordController::class, 'records_day']);
         Route::get('/record/leave', [RecordController::class, 'record_leave']);
         Route::get('/record/{id}', [RecordController::class, 'record_detail']);
         Route::put('/record/{id}', [RecordController::class, 'record_status']);
-
-        Route::resource('/event', EventController::class);
     });
 
     Route::get('/me/profile', [ProfileController::class, 'updateProfilePage']);

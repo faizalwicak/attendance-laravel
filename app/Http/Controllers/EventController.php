@@ -61,11 +61,18 @@ class EventController extends Controller
 
     public function edit(Event $event)
     {
+        if ($event->school_id != auth()->user()->school_id) {
+            return abort(403);
+        }
         return view('event-form', ['title' => 'Edit Event', 'event' => $event]);
     }
 
     public function update(Request $request, Event $event)
     {
+        if ($event->school_id != auth()->user()->school_id) {
+            return abort(403);
+        }
+
         $validateData = $request->validate([
             'date' => 'required|date',
             'description' => 'required|max:255',
@@ -87,6 +94,10 @@ class EventController extends Controller
 
     public function destroy(Event $event)
     {
+        if ($event->school_id != auth()->user()->school_id) {
+            return abort(403);
+        }
+
         $event->delete();
 
         return redirect()
