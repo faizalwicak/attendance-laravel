@@ -1,6 +1,11 @@
 @extends('layouts.master')
 
 @section('style')
+    <!-- datepicker css -->
+    <link rel="stylesheet" href="/assets/libs/flatpickr/flatpickr.min.css">
+
+    <!-- leaflet Css -->
+    <link href="/assets/libs/leaflet/leaflet.css" rel="stylesheet" type="text/css" />
 @endsection
 
 @section('script')
@@ -9,7 +14,7 @@
 @section('content')
     <div class="card">
         <div class="card-body">
-            <form action="{{ $quote ? '/quote/' . $quote->id : '/quote' }}" method="POST">
+            <form action="{{ $notification ? '/notification/' . $notification->id : '/notification' }}" method="POST">
                 @if ($errors->any())
                     @foreach ($errors->all() as $error)
                         <div class="alert alert-danger alert-border-left alert-dismissible fade show" role="alert">
@@ -20,23 +25,19 @@
                 @endif
 
                 @csrf
-                @if ($quote)
+                @if ($notification)
                     @method('PUT')
                 @endif
 
                 <div class="mb-3">
-                    <label for="input-message" class="form-label">Pesan</label>
-                    <textarea name="message" type="text" class="form-control" id="input-message" required>{{ old('message', $quote ? $quote->message : '') }}</textarea>
+                    <label for="input-title" class="form-label">Judul</label>
+                    <input name="title" type="text" class="form-control" id="input-title"
+                        value="{{ old('title', $notification ? $notification->title : '') }}" required>
                 </div>
 
                 <div class="mb-3">
-                    <label for="input-active" class="form-label">Status</label>
-                    <select id="input-active" name="active" class="form-select" required>
-                        <option value="0" {{ old('active', $quote ? $quote->active : '') == 0 ? 'selected' : '' }}>
-                            Tidak Aktif</option>
-                        <option value="1" {{ old('active', $quote ? $quote->active : '') == 1 ? 'selected' : '' }}>
-                            Aktif</option>
-                    </select>
+                    <label for="input-message" class="form-label">Pesan</label>
+                    <textarea name="message" type="text" class="form-control" id="input-message" required>{{ old('message', $notification ? $notification->message : '') }}</textarea>
                 </div>
 
                 <div>

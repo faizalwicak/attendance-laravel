@@ -106,6 +106,13 @@
                     </li>
 
                     <li>
+                        <a href="/notification">
+                            <i class="bx bxs-message-rounded-dots icon nav-icon"></i>
+                            <span class="menu-item" data-key="t-calendar">Pengumuman</span>
+                        </a>
+                    </li>
+
+                    <li>
                         <a href="/grade">
                             <i class="bx bxs-buildings icon nav-icon"></i>
                             <span class="menu-item" data-key="t-calendar">Kelas</span>

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\LoginController;
@@ -70,12 +71,9 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/student/import', [StudentController::class, 'importStudent']);
         Route::post('/student/importAction', [StudentController::class, 'importStudentAction']);
 
-        Route::get('/quote', [QuoteController::class, 'index']);
-        Route::get('/quote/create', [QuoteController::class, 'create']);
-        Route::post('/quote/store', [QuoteController::class, 'store']);
-        Route::delete('/quote/{id}', [QuoteController::class, 'destroy']);
-        Route::get('/quote/{id}/edit', [QuoteController::class, 'edit']);
-        Route::put('/quote/{id}', [QuoteController::class, 'update']);
+        Route::resource('/quote', QuoteController::class);
+
+        Route::resource('/notification', NotificationController::class);
 
         Route::resource('/event', EventController::class);
     });

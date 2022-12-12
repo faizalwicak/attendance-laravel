@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\ClockController;
 use App\Http\Controllers\Api\LeaveController;
 use App\Http\Controllers\Api\LoginController;
+use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\QuoteController;
 use App\Http\Controllers\Api\RecordController;
@@ -40,6 +41,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::post('/leave', [LeaveController::class, 'create']);
 
     Route::get('/quote', [QuoteController::class, 'index']);
+    Route::get('/notification', [NotificationController::class, 'index']);
 
     Route::get('/record-friend', [RecordController::class, 'friend']);
 });

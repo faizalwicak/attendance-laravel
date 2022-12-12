@@ -27,8 +27,8 @@ class QuoteController extends Controller
             'message' => 'required|max:255',
             'active' => 'required|boolean',
         ], [
-            'name.required' => 'Pesan tidak boleh kosong.',
-            'name.max' => 'Pesan maksimal 255 karakter.',
+            'message.required' => 'Pesan tidak boleh kosong.',
+            'message.max' => 'Pesan maksimal 255 karakter.',
             'active.required' => 'Status tidak boleh kosong.',
             'active.boolean' => 'Status tidak valid.',
         ]);
