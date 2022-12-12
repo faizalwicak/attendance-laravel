@@ -80,7 +80,7 @@
         }).render(document.getElementById("table-data"));
 
         document.getElementById("select-grade").addEventListener('change', function() {
-            location.href = "/grade/" + this.value + "/student"
+            location.href = "/student?grade=" + this.value
         })
     </script>
 @endsection
@@ -94,6 +94,7 @@
                         <div class="col-md-6">
                             <div class="form-floating mb-3">
                                 <select class="form-select" id="select-grade" aria-label="Kelas">
+                                    <option value="" disabled selected>-- pilih kelas --</option>
                                     @foreach ($grades as $grade)
                                         <option value="{{ $grade->id }}"
                                             {{ $selectedGrade == $grade->id ? 'selected' : '' }}>{{ $grade['name'] }}

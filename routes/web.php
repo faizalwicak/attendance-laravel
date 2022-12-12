@@ -58,7 +58,6 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::group(['middleware' => ['role:ADMIN']], function () {
         Route::resource('/grade', GradeController::class);
-        Route::get('/grade/{grade_id}/student', [StudentController::class, 'indexGrade']);
 
         Route::get('/student', [StudentController::class, 'index']);
         Route::get('/student/create', [StudentController::class, 'create']);

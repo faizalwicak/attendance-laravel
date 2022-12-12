@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Exports\ExportStudent;
 use App\Imports\StudentsImport;
 use App\Models\Grade;
 use App\Models\User;
@@ -12,36 +11,19 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class StudentController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $grade = Grade::where('school_id', auth()->user()->school_id)
-            ->orderBy('name')
-            ->first();
+        $selectedGrade = $request->get('grade');
 
-        if (!$grade) {
-            return redirect('/grade');
+        $users = [];
+
+        if ($selectedGrade != null) {
+            $users = User::where('role', 'USER')
+                ->where('school_id', auth()->user()->school_id)
+                ->where('grade_id', $selectedGrade)
+                ->orderBy('username')
+                ->get();
         }
-
-        return redirect('/grade/' . $grade->id . '/student');
-    }
-
-    public function indexGrade($grade_id)
-    {
-
-        $grade = Grade::where('id', $grade_id)
-            ->where('school_id', auth()->user()->school_id)
-            ->orderBy('name')
-            ->first();
-
-        if (!$grade) {
-            return abort(403);
-        }
-
-        $users = User::where('role', 'USER')
-            ->where('school_id', auth()->user()->school_id)
-            ->where('grade_id', $grade_id)
-            ->orderBy('username')
-            ->get();
 
         $grades = Grade::where('school_id', auth()->user()->school_id)
             ->orderBy('name')
@@ -51,7 +33,7 @@ class StudentController extends Controller
             return redirect('/grade');
         }
 
-        return view('student-index', ['title' => 'Daftar Siswa', 'users' => $users, 'grades' => $grades, 'selectedGrade' => $grade_id]);
+        return view('student-index', ['title' => 'Daftar Siswa', 'users' => $users, 'grades' => $grades, 'selectedGrade' => $selectedGrade]);
     }
 
     public function create()
@@ -107,7 +89,7 @@ class StudentController extends Controller
 
         User::create($validateData);
 
-        return redirect('/grade/' . $validateData['grade_id'] . '/student')
+        return redirect('/student?grade=' . $validateData['grade_id'])
             ->with('success', 'Siswa berhasil dibuat.');
     }
 
@@ -175,7 +157,7 @@ class StudentController extends Controller
 
         $user->update($validateData);
 
-        return redirect('/grade/' . $validateData['grade_id'] . '/student')
+        return redirect('/student?grade=' . $validateData['grade_id'])
             ->with('success', 'Siswa berhasil disimpan.');
     }
 
@@ -187,7 +169,7 @@ class StudentController extends Controller
         }
         $user->delete();
 
-        return redirect('/grade/' . $user->grade_id . '/student')
+        return redirect('/student?grade=' . $user->grade_id)
             ->with('success', 'Siswa berhasil dihapus.');
     }
 
@@ -221,7 +203,7 @@ class StudentController extends Controller
         $user->device_id = null;
         $user->save();
 
-        return redirect('/grade/' . $user->grade_id . '/student')
+        return redirect('/student?grade=' . $user->grade_id)
             ->with('success', 'Device berhasil direset.');
     }
 }

@@ -11,6 +11,7 @@ class Quote extends Model
 
     protected $fillable = [
         'message',
-        'active'
+        'active',
+        'school_id'
     ];
 }
