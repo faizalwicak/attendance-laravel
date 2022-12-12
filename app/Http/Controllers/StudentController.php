@@ -30,7 +30,8 @@ class StudentController extends Controller
             ->get();
 
         if (count($grades) == 0) {
-            return redirect('/grade');
+            return redirect('/grade')
+                ->with('warning', 'Kelas belum ditambahkan.');
         }
 
         return view('student-index', ['title' => 'Daftar Siswa', 'users' => $users, 'grades' => $grades, 'selectedGrade' => $selectedGrade]);
