@@ -206,7 +206,6 @@ class StudentController extends Controller
             'file.max' => 'File maksimal 2 MB.'
         ]);
 
-        // return back();
         Excel::import(new StudentsImport, $validateData['file']);
 
         return redirect('/student')
