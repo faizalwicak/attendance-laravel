@@ -54,8 +54,7 @@ class SchoolController extends Controller
 
         School::create($validateData);
 
-        return redirect()
-            ->route('school.index')
+        return redirect('/school')
             ->with('success', 'Sekolah berhasil dibuat.');
     }
 
@@ -100,8 +99,7 @@ class SchoolController extends Controller
 
         $school->update($validateData);
 
-        return redirect()
-            ->route('school.index')
+        return redirect('/school')
             ->with('success', 'Sekolah berhasil disimpan.');
     }
 
@@ -109,8 +107,7 @@ class SchoolController extends Controller
     {
         $school->delete();
 
-        return redirect()
-            ->route('school.index')
+        return redirect('/school')
             ->with('success', 'Sekolah berhasil dihapus.');
     }
 

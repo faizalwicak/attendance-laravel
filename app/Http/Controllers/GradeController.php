@@ -39,8 +39,7 @@ class GradeController extends Controller
         $requestData['school_id'] = Auth::user()->school_id;
         Grade::create($requestData);
 
-        return redirect()
-            ->route('grade.index')
+        return redirect('/grade')
             ->with('success', 'Kelas berhasil dibuat.');
     }
 
@@ -70,8 +69,7 @@ class GradeController extends Controller
 
         $grade->update($requestData);
 
-        return redirect()
-            ->route('grade.index')
+        return redirect('/grade')
             ->with('success', 'Kelas berhasil disimpan.');
     }
 
@@ -83,8 +81,7 @@ class GradeController extends Controller
 
         $grade->delete();
 
-        return redirect()
-            ->route('grade.index')
+        return redirect('/grade')
             ->with('success', 'Kelas berhasil dihapus.');
     }
 }

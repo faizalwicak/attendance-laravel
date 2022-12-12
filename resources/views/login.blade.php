@@ -1,27 +1,27 @@
 <!doctype html>
 <html lang="en">
 
-    <head>
+<head>
 
-        <meta charset="utf-8" />
-        <title>Login | Attendance System</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta content="Premium Multipurpose Admin & Dashboard Template" name="description" />
-        <meta content="Themesdesign" name="author" />
-        <!-- App favicon -->
-        <link rel="shortcut icon" href="/assets/images/favicon.ico">
+    <meta charset="utf-8" />
+    <title>Login | Attendance System</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="Premium Multipurpose Admin & Dashboard Template" name="description" />
+    <meta content="Themesdesign" name="author" />
+    <!-- App favicon -->
+    <link rel="shortcut icon" href="/assets/images/favicon.ico">
 
-        <!-- Bootstrap Css -->
-        <link href="/assets/css/bootstrap.min.css" id="bootstrap-style" rel="stylesheet" type="text/css" />
-        <!-- Icons Css -->
-        <link href="/assets/css/icons.min.css" rel="stylesheet" type="text/css" />
-        <!-- App Css-->
-        <link href="/assets/css/app.min.css" id="app-style" rel="stylesheet" type="text/css" />
+    <!-- Bootstrap Css -->
+    <link href="/assets/css/bootstrap.min.css" id="bootstrap-style" rel="stylesheet" type="text/css" />
+    <!-- Icons Css -->
+    <link href="/assets/css/icons.min.css" rel="stylesheet" type="text/css" />
+    <!-- App Css-->
+    <link href="/assets/css/app.min.css" id="app-style" rel="stylesheet" type="text/css" />
 
-    </head>
+</head>
 
-    
-    <body>
+
+<body>
 
     <!-- <body data-layout="horizontal"> -->
 
@@ -34,27 +34,31 @@
 
                         <div class="mb-4 pb-2">
                             <a href="index.html" class="d-block auth-logo">
-                                <img src="/assets/images/logo-dark.png" alt="" height="30" class="auth-logo-dark me-start">
-                                <img src="/assets/images/logo-light.png" alt="" height="30" class="auth-logo-light me-start">
+                                <img src="/assets/images/logo-dark.png" alt="" height="30"
+                                    class="auth-logo-dark me-start">
+                                <img src="/assets/images/logo-light.png" alt="" height="30"
+                                    class="auth-logo-light me-start">
                             </a>
                         </div>
 
                         <div class="card">
-                            <div class="card-body p-4"> 
+                            <div class="card-body p-4">
                                 <div class="text-center mt-2">
                                     <h5>Selamat Datang!</h5>
                                     <p class="text-muted">Masuk untuk melanjutkan.</p>
                                 </div>
                                 <div class="p-2 mt-4">
-                                    <form action="{{ route('login') }}" method="post">
-                                        @if(session('error'))
-                                        <div class="alert alert-danger alert-border-left alert-dismissible fade show" role="alert">
-                                            {{session('error')}}
-                                        </div>
+                                    <form action="/login" method="post">
+                                        @if (session('error'))
+                                            <div class="alert alert-danger alert-border-left alert-dismissible fade show"
+                                                role="alert">
+                                                {{ session('error') }}
+                                            </div>
                                         @endif
                                         @if ($errors->any())
                                             @foreach ($errors->all() as $error)
-                                                <div class="alert alert-danger alert-border-left alert-dismissible fade show" role="alert">
+                                                <div class="alert alert-danger alert-border-left alert-dismissible fade show"
+                                                    role="alert">
                                                     {{ $error }}
                                                 </div>
                                             @endforeach
@@ -63,11 +67,13 @@
                                         <div class="mb-3">
                                             <label class="form-label" for="username">Username</label>
                                             <div class="position-relative input-custom-icon">
-                                                <input name="username" type="text" class="form-control" id="username" placeholder="Enter username" value="{{ old('username', '') }}" required>
-                                                 <span class="bx bx-user"></span>
+                                                <input name="username" type="text" class="form-control"
+                                                    id="username" placeholder="Enter username"
+                                                    value="{{ old('username', '') }}" required>
+                                                <span class="bx bx-user"></span>
                                             </div>
                                         </div>
-                
+
                                         <div class="mb-3">
                                             {{-- <div class="float-end">
                                                 <a href="auth-recoverpw.html" class="text-muted text-decoration-underline">Forgot password?</a>
@@ -75,24 +81,28 @@
                                             <label class="form-label" for="password-input">Password</label>
                                             <div class="position-relative auth-pass-inputgroup input-custom-icon">
                                                 <span class="bx bx-lock-alt"></span>
-                                                <input name="password" type="password" class="form-control" id="password-input" placeholder="Enter password">
-                                                <button type="button" class="btn btn-link position-absolute h-100 end-0 top-0" id="password-addon" required>
+                                                <input name="password" type="password" class="form-control"
+                                                    id="password-input" placeholder="Enter password">
+                                                <button type="button"
+                                                    class="btn btn-link position-absolute h-100 end-0 top-0"
+                                                    id="password-addon" required>
                                                     <i class="mdi mdi-eye-outline font-size-18 text-muted"></i>
                                                 </button>
                                             </div>
                                         </div>
-                
+
                                         {{-- <div class="form-check py-1">
                                             <input type="checkbox" class="form-check-input" id="auth-remember-check">
                                             <label class="form-check-label" for="auth-remember-check">Remember me</label>
                                         </div> --}}
-                                        
+
                                         <div class="mt-5">
-                                            <button class="btn btn-primary w-100 waves-effect waves-light" type="submit">Log In</button>
+                                            <button class="btn btn-primary w-100 waves-effect waves-light"
+                                                type="submit">Log In</button>
                                         </div>
                                     </form>
                                 </div>
-            
+
                             </div>
                         </div>
 
@@ -112,14 +122,14 @@
     </div>
     <!-- end authentication section -->
 
-        <!-- JAVASCRIPT -->
-        <script src="/assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
-        <script src="/assets/libs/metismenujs/metismenujs.min.js"></script>
-        <script src="/assets/libs/simplebar/simplebar.min.js"></script>
-        <script src="/assets/libs/eva-icons/eva.min.js"></script>
+    <!-- JAVASCRIPT -->
+    <script src="/assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="/assets/libs/metismenujs/metismenujs.min.js"></script>
+    <script src="/assets/libs/simplebar/simplebar.min.js"></script>
+    <script src="/assets/libs/eva-icons/eva.min.js"></script>
 
-        <script src="/assets/js/pages/pass-addon.init.js"></script>
+    <script src="/assets/js/pages/pass-addon.init.js"></script>
 
-    </body>
+</body>
 
 </html>
