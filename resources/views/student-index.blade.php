@@ -40,7 +40,7 @@
                 name: 'Id Perangkat',
                 width: '200px',
             }, {
-                name: "Action",
+                name: ". . .",
                 sort: false,
                 width: '110px',
                 formatter: (function(cell) {

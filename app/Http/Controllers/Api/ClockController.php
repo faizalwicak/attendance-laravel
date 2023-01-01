@@ -93,13 +93,19 @@ class ClockController extends Controller
             $message = "Presensi berhasil. Anda terlambat masuk.";
         }
 
+        $updateData = [
+            'clock_in_time' => $nowDate->format('H:i:s'),
+            'clock_in_lat' => $data['lat'],
+            'clock_in_lng' => $data['lng'],
+            'clock_in_status' => $status,
+        ];
+
         if ($record) {
-            $record = $record->attend()->update([
-                'clock_in_time' => $nowDate->format('H:i:s'),
-                'clock_in_lat' => $data['lat'],
-                'clock_in_lng' => $data['lng'],
-                'clock_in_status' => $status,
-            ]);
+            if ($record->attend == null) {
+                $record = $record->attend()->create($updateData);
+            } else {
+                $record = $record->attend()->update($updateData);
+            }
         } else {
             $createdData = [
                 'user_id' => auth()->user()->id,
@@ -107,12 +113,7 @@ class ClockController extends Controller
                 'is_leave' => 0,
             ];
             $record = Record::create($createdData);
-            $record->attend()->create([
-                'clock_in_time' => $nowDate->format('H:i:s'),
-                'clock_in_lat' => $data['lat'],
-                'clock_in_lng' => $data['lng'],
-                'clock_in_status' => $status,
-            ]);
+            $record->attend()->create($updateData);
         }
 
         return response()->json([
@@ -140,10 +141,6 @@ class ClockController extends Controller
             ->where('user_id', auth()->user()->id)
             ->with('attend')
             ->first();
-
-        // if ($record && $record->attend->clock_out_time != null) {
-        //     return response()->json(['message' => 'Anda sudah absen pulang.'], 422);
-        // }
 
         $school = School::find(auth()->user()->school_id)->first();
         $status = null;
@@ -228,6 +225,7 @@ class ClockController extends Controller
         $records = Record::where('user_id', auth()->user()->id)
             ->whereDate('date', '=', $now->format('Y-m-d'))
             ->with('attend')
+            ->with('leave')
             ->first();
 
         return response()->json($records);

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\ExportReport;
 use App\Models\Event;
 use App\Models\Grade;
 use App\Models\Leave;
@@ -9,13 +10,13 @@ use App\Models\Record;
 use App\Models\User;
 use DateTime;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
 class RecordController extends Controller
 {
 
-    public function records_month(Request $request)
+    private function processRecordMonth(Request $request, $is_export)
     {
-
         $selectedGrade = $request->get('grade');
         $selectedMonth = $request->get('month', date('Y-m'));
 
@@ -84,44 +85,62 @@ class RecordController extends Controller
         }
 
         $userArray = [];
+
         foreach ($users as $u) {
             $a = [$u->image != null ? $u->image : "", $u->username, $u->name, $u->gender == "MALE" ? "L" : "P"];
             foreach ($dateString as $d) {
-                array_push($a, "A");
+                if ($is_export) {
+                    array_push($a, "A");
+                } else {
+                    array_push($a, [$u->id, $d, "A"]);
+                }
             }
             $total = count($dateString);
             $attend = 0;
             $sick = 0;
             $leave = 0;
+            $onTime = 0;
+            $late = 0;
 
             foreach ($u->records as $r) {
                 $index = array_search($r->date, $dateString);
-                $status = '';
+                $status = 'A';
                 if ($r->is_leave) {
-                    if ($r->leave->type == 'SICK') {
+                    if ($r->leave->type == 'SICK' && $r->leave->leave_status == 'ACCEPT') {
                         $sick += 1;
                         $status = 'S';
-                    } else if ($r->leave->type == 'LEAVE') {
+                    } else if ($r->leave->type == 'LEAVE' && $r->leave->leave_status == 'ACCEPT') {
                         $leave += 1;
                         $status = 'I';
                     }
                 } else {
-                    $status = $r->attend->clock_in_status == "ON_TIME" ? "TW" : "TL";
+                    if ($r->attend->clock_in_status == "ON_TIME") {
+                        $onTime++;
+                        $status = 'TW';
+                    } else {
+                        $late++;
+                        $status = 'TL';
+                    }
                     $attend += 1;
                 }
 
-                $a[$index + 4] = $status;
+                if ($is_export) {
+                    $a[$index + 4] = $status;
+                } else {
+                    $a[$index + 4] = [$u->id, $r->date, $status];
+                }
             }
             array_push($a, $total);
             array_push($a, $attend);
+            array_push($a, $onTime);
+            array_push($a, $late);
             array_push($a, $sick);
             array_push($a, $leave);
             array_push($a, $total - $attend - $sick - $leave);
-            debugbar()->info($a);
             array_push($userArray, $a);
         }
 
-        $params = [
+        return [
             'title' => "Laporan Bulanan",
             'users' => $users,
             'userArray' => $userArray,
@@ -130,11 +149,30 @@ class RecordController extends Controller
             'selectedGrade' => $selectedGrade,
             'selectedMonth' => $selectedMonth
         ];
+    }
+
+    public function recordMonth(Request $request)
+    {
+
+        $params = $this->processRecordMonth($request, False);
 
         return view('record-month', $params);
     }
 
-    public function records_day(Request $request)
+    public function recordMonthExport(Request $request)
+    {
+
+        $params = $this->processRecordMonth($request, true);
+
+        $grade = Grade::findOrFail($params['selectedGrade']);
+
+        return Excel::download(
+            new ExportReport($params['userArray'], $params['days']),
+            'Laporan ' . $grade->name . ' (' . $params['selectedMonth'] . ').xlsx'
+        );
+    }
+
+    public function recordDay(Request $request)
     {
 
         $selectedGrade = $request->get('grade');
@@ -177,7 +215,7 @@ class RecordController extends Controller
         }
 
         $params = [
-            'title' => "Laporan Harian",
+            'title' => "Presensi",
             'users' => $users,
             'grades' => $grades,
             'selectedGrade' => $selectedGrade,
@@ -187,129 +225,41 @@ class RecordController extends Controller
         return view('record-day', $params);
     }
 
-    public function record_detail($id)
+    public function detailByQuery($user_id, $day)
     {
-        if (auth()->user()->role == 'ADMIN') {
-            $record = Record::where('id', $id)
-                ->with('user', 'leave', 'attend')
-                ->whereHas('user', function ($query) {
-                    $query->where('school_id', auth()->user()->school_id);
-                })
-                ->first();
-        } else {
-            $user = User::find(auth()->user()->id);
-            $allowedGrades = $user->grades()->get();
-            $allowedGradesArr = [];
-            foreach ($allowedGrades as $g) {
-                array_push($allowedGradesArr, $g->id);
-            }
-
-            $record = Record::where('id', $id)
-                ->with('user', 'leave', 'attend')
-                ->whereHas('user', function ($query) {
-                    $query->where('school_id', auth()->user()->school_id);
-                })
-                ->whereHas('user', function ($query) use ($allowedGradesArr) {
-                    $query->whereIn('grade_id', $allowedGradesArr);
-                })
-                ->first();
+        if ($user_id == null || $user_id == "" || $day == null || $day == "") {
+            return abort(404);
         }
-
-        if (!$record) {
+        $user = User::where('id', $user_id)->first();
+        if ($user == null) {
             return abort(404);
         }
 
+        if (auth()->user()->role == 'ADMIN') {
+        } else {
+            $admin = User::find(auth()->user()->id);
+            $allowedGrades = $admin->grades()->get();
+            $allowedGradesArr = [];
+            foreach ($allowedGrades as $g) {
+                array_push($allowedGradesArr, $g->id);
+            }
+
+            if (!in_array($user->grade_id, $allowedGradesArr)) {
+                return abort(404);
+            }
+        }
+
+        $record = Record::where('user_id', $user_id)
+            ->where('date', $day)
+            ->with('attend')
+            ->with('leave')
+            ->first();
+
         return view('record-detail', [
-            'title' => 'Detail Presensi "' . $record->user->name . ' (' . date('d/m/Y', strtotime($record->date)) . ')"',
-            'record' => $record
+            'title' => 'Detail Presensi',
+            'user' => $user,
+            'record' => $record,
+            'selectedDay' => $day,
         ]);
-    }
-
-    public function record_leave(Request $request)
-    {
-
-        $selectedDay = $request->get('day');
-
-        if ($selectedDay == null) {
-            $selectedDay = date('Y-m-d');
-        }
-
-        // $schoolId = auth()-
-        $leaves = [];
-        if (auth()->user()->role == 'ADMIN') {
-            $leaves = Leave::with('record', 'record.user')
-                ->whereHas('record', function ($query) use ($selectedDay) {
-                    $query->where('date', $selectedDay);
-                })
-                ->whereHas('record.user', function ($query) {
-                    $query->where('school_id', auth()->user()->school_id);
-                })
-                ->get();
-        } else {
-            $user = User::find(auth()->user()->id);
-            $allowedGrades = $user->grades()->get();
-            $allowedGradesArr = [];
-            foreach ($allowedGrades as $g) {
-                array_push($allowedGradesArr, $g->id);
-            }
-
-            $leaves = Leave::with(['record', 'record.user'])
-                ->whereHas('record', function ($query) use ($selectedDay) {
-                    $query->where('date', $selectedDay);
-                })
-                ->whereHas('record.user', function ($query) use ($allowedGradesArr) {
-                    $query->where('school_id', auth()->user()->school_id)
-                        ->whereIn('grade_id', $allowedGradesArr);
-                })
-                ->get();
-        }
-
-        $params = [
-            'title' => 'Daftar Izin',
-            'leaves' => $leaves,
-            'selectedDay' => $selectedDay
-        ];
-
-        return view('record-leave', $params);
-    }
-
-    public function record_status(Request $request, $id)
-    {
-        $validateData = $request->validate([
-            'accept' => 'required|boolean',
-        ], [
-            'accept.required' => 'Status tidak boleh kosong.',
-            'accept.boolean' => 'Status tidak valid.',
-        ]);
-
-        if (auth()->user()->role == 'ADMIN') {
-            $record = Record::where('id', $id)
-                ->with('user', 'leave', 'attend')
-                ->whereHas('user', function ($query) {
-                    $query->where('school_id', auth()->user()->school_id);
-                })
-                ->first();
-            if (!$record || !$record->is_leave) return abort(404);
-        } else {
-            $user = User::find(auth()->user()->id);
-            $allowedGrades = $user->grades()->get();
-            $allowedGradesArr = [];
-            foreach ($allowedGrades as $g) {
-                array_push($allowedGradesArr, $g->id);
-            }
-
-            $record = Record::where('id', $id)
-                ->with('user', 'leave', 'attend')
-                ->whereHas('user', function ($query) use ($allowedGradesArr) {
-                    $query->where('school_id', auth()->user()->school_id)
-                        ->whereIn('grade_id', $allowedGradesArr);
-                })
-                ->first();
-        }
-
-        if (!$record || !$record->is_leave) return abort(404);
-
-        $record->leave()->update(['leave_status' => $validateData['accept'] ? 'ACCEPT' : 'REJECT']);
-        return redirect('/record/' . $id)->with('success', 'Berhasil update data');
     }
 }

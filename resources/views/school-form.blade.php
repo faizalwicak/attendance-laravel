@@ -139,7 +139,7 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="input-name" class="form-label">Lokasi *</label>
+                    <label for="leaflet-map-marker" class="form-label">Lokasi *</label>
                     <div id="leaflet-map-marker" class="leaflet-map"></div>
                 </div>
 
@@ -169,7 +169,7 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="input-name" class="form-label">Logo</label>
+                    <label for="input-image" class="form-label">Logo</label>
                     @if ($school && $school->image != null && $school->image != '')
                         <br>
                         <img src="/images/{{ $school->image }}" alt="" class="avatar-sm rounded-circle me-2" />
@@ -177,6 +177,17 @@
                     @endif
                     <input name="image" class="form-control" type="file" id="input-image"
                         value="{{ old('image', $school ? $school->image : '') }}">
+                </div>
+
+                <div class="mb-3">
+                    <label for="input-image-background" class="form-label">Background</label>
+                    @if ($school && $school->image_background != null && $school->image_background != '')
+                        <br>
+                        <img src="/images/{{ $school->image_background }}" alt="" class="" />
+                        <br>
+                    @endif
+                    <input name="image_background" class="form-control" type="file" id="input-image-background"
+                        value="{{ old('image_background', $school ? $school->image_background : '') }}">
                 </div>
 
                 <div>

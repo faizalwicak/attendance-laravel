@@ -10,7 +10,7 @@ class NotificationController extends Controller
     public function index()
     {
         $notifications = Notification::where('school_id', auth()->user()->school_id)
-            ->orderBy('created_at', 'DESC')
+            ->orderBy('updated_at', 'DESC')
             ->get();
 
         return view('notification-index', ['title' => 'Daftar Pengumuman', 'notifications' => $notifications]);

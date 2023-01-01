@@ -19,7 +19,7 @@
                     name: 'Pesan',
                 },
                 {
-                    name: 'Tanggal Dibuat',
+                    name: 'Tanggal',
                 },
                 {
                     name: "...",
@@ -45,7 +45,7 @@
             data: [
                 @foreach ($notifications as $notification)
                     ["{{ $notification->title }}", "{{ $notification->message }}",
-                        "{{ $notification->created_at }}",
+                        "{{ $notification->updated_at }}",
                         "{{ $notification->id }}"
                     ],
                 @endforeach

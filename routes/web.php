@@ -1,12 +1,15 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ClockController;
+use App\Http\Controllers\LeaveController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\SchoolController;
 use App\Http\Controllers\GradeController;
+use App\Http\Controllers\ImportantLinkController;
 use App\Http\Controllers\OverviewController;
 use App\Http\Controllers\QuoteController;
 use App\Http\Controllers\RecordController;
@@ -26,13 +29,14 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    if (Auth::check()) {
-        if (Auth::user()->role == 'SUPERADMIN') {
-            return redirect('/school');
-        }
-        return redirect('/overview');
-    }
-    return redirect('/login');
+    return view('landing');
+    // if (Auth::check()) {
+    //     if (Auth::user()->role == 'SUPERADMIN') {
+    //         return redirect('/school');
+    //     }
+    //     return redirect('/overview');
+    // }
+    // return redirect('/login');
 });
 
 Route::get('/login', [LoginController::class, 'login'])->name('login');
@@ -73,6 +77,8 @@ Route::group(['middleware' => ['auth']], function () {
 
         Route::resource('/quote', QuoteController::class);
 
+        Route::resource('/important-link', ImportantLinkController::class);
+
         Route::resource('/notification', NotificationController::class);
 
         Route::resource('/event', EventController::class);
@@ -80,11 +86,25 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::group(['middleware' => ['role:ADMIN,OPERATOR']], function () {
         Route::get('/overview', [OverviewController::class, 'index']);
-        Route::get('/record/month', [RecordController::class, 'records_month']);
-        Route::get('/record/day', [RecordController::class, 'records_day']);
-        Route::get('/record/leave', [RecordController::class, 'record_leave']);
-        Route::get('/record/{id}', [RecordController::class, 'record_detail']);
-        Route::put('/record/{id}', [RecordController::class, 'record_status']);
+        Route::get('/record/day', [RecordController::class, 'recordDay']);
+        Route::get('/record/month', [RecordController::class, 'recordMonth']);
+        Route::get('/record/export', [RecordController::class, 'recordMonthExport']);
+
+        // Route::get('/record/{id}', [RecordController::class, 'detail_by_id']);
+        // Route::put('/record/{id}', [RecordController::class, 'record_status']);
+
+        // detail record by user
+        Route::post('/record/user/{user_id}/clock-in', [ClockController::class, 'clockIn']);
+        Route::post('/record/user/{user_id}/clock-out', [ClockController::class, 'clockOut']);
+
+        Route::get('/record/user/{user_id}/{day}', [RecordController::class, 'detailByQuery']);
+
+        // leave
+        Route::get('/record/leave', [LeaveController::class, 'index']);
+        Route::post('/record/leave', [LeaveController::class, 'store']);
+        Route::put('/record/leave/status', [LeaveController::class, 'leaveStatus']);
+
+        Route::get('/record/user/{user_id}/{day}/leave', [LeaveController::class, 'create']);
     });
 
     Route::get('/me/profile', [ProfileController::class, 'updateProfilePage']);

@@ -51,6 +51,12 @@
                     {
                         name: '{{ explode('-', $d)[2] }}',
                         width: '100px',
+                        formatter: function(cell) {
+                            return gridjs.html(`
+                                <a href="/record/user/${cell[0]}/${cell[1]}">${cell[2]}</a>
+                            `);
+
+                        }
                     },
                 @endforeach {
                     name: 'Total',
@@ -58,6 +64,14 @@
                 },
                 {
                     name: 'Masuk',
+                    width: '100px',
+                },
+                {
+                    name: 'Tepat Waktu (TW)',
+                    width: '100px',
+                },
+                {
+                    name: 'Terlambat (TL)',
                     width: '100px',
                 },
                 {
@@ -138,7 +152,11 @@
 
                                 </div>
                                 <div class="col-sm">
-
+                                    <div class="mt-3 mt-md-0 mb-3">
+                                        <a href="/record/export?month={{ $selectedMonth }}&grade={{ $selectedGrade }}"
+                                            class="btn btn-success btn-rounded waves-effect waves-light mb-2 me-2"><i
+                                                class="mdi mdi-export me-1"></i> Export</a>
+                                    </div>
                                 </div>
                             </div>
                             <!-- end row -->

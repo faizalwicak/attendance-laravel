@@ -4,6 +4,9 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Grade;
+use App\Models\ImportantLink;
+use App\Models\Notification;
+use App\Models\Quote;
 use App\Models\School;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -13,8 +16,21 @@ class ProfileController extends Controller
     public function profile()
     {
         $res = auth()->user();
-        $res['school'] = School::find($res->school_id)->first();
-        $res['grade'] = Grade::find($res->grade_id)->first();
+        $res['school'] = School::find(auth()->user()->school_id);
+        $res['grade'] = Grade::find(auth()->user()->grade_id);
+        $res['quote'] = Quote::where('school_id', auth()->user()->school_id)->where('active', 1)->first();
+        $res['link'] = ImportantLink::where('school_id', auth()->user()->school_id)->get();
+
+        if ($res->last_seen_notification != null) {
+            $notifications = Notification::where('school_id', auth()->user()->school_id)
+                ->where('updated_at', '>', $res->last_seen_notification)
+                ->count();
+        } else {
+            $notifications = Notification::where('school_id', auth()->user()->school_id)
+                ->count();
+        }
+        $res['notifications'] = $notifications;
+
         return response()->json($res);
     }
 

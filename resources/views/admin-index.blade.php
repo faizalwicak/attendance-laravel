@@ -48,7 +48,7 @@
                         }
                     },
                 @endif {
-                    name: "Action",
+                    name: ". . .",
                     sort: false,
                     width: '100px',
                     formatter: (function(cell) {

@@ -47,18 +47,22 @@
                 {
                     name: 'Status',
                     formatter: function(cell) {
-                        if (cell == '1') {
+                        if (cell == 'SICK') {
                             return gridjs.html(`
-                  <span class="badge badge-pill badge-soft-warning font-size-12">IZIN</span>
-                `);
+                                <span class="badge badge-pill badge-soft-warning font-size-12">SAKIT</span>
+                            `);
+                        } else if (cell == 'LEAVE') {
+                            return gridjs.html(`
+                                <span class="badge badge-pill badge-soft-warning font-size-12">IZIN</span>
+                            `);
                         } else if (cell == '0') {
                             return gridjs.html(`
-                  <span class="badge badge-pill badge-soft-success font-size-12">HADIR</span>
-                `);
+                                <span class="badge badge-pill badge-soft-success font-size-12">HADIR</span>
+                            `);
                         } else {
                             return gridjs.html(`
-                  <span class="badge badge-pill badge-soft-danger font-size-12">BELUM PRESENSI</span>
-                `);
+                                <span class="badge badge-pill badge-soft-danger font-size-12">BELUM HADIR</span>
+                            `);
                         }
                     }
                 },
@@ -67,20 +71,24 @@
                     formatter: function(cell) {
                         if (cell == 'ON_TIME') {
                             return gridjs.html(`
-                  <span class="badge badge-pill badge-soft-success font-size-12">TEPAT WAKTU</span>
-                `);
+                                <span class="badge badge-pill badge-soft-success font-size-12">TEPAT WAKTU</span>
+                            `);
                         } else if (cell == 'LATE') {
                             return gridjs.html(`
-                  <span class="badge badge-pill badge-soft-danger font-size-12">TELAT</span>
-                `);
-                        } else if (cell == 'SICK') {
+                                <span class="badge badge-pill badge-soft-danger font-size-12">TERLAMBAT</span>
+                            `);
+                        } else if (cell == 'WAITING') {
                             return gridjs.html(`
-                  <span class="badge badge-pill badge-soft-warning font-size-12">SAKIT</span>
-                `);
-                        } else if (cell == 'LEAVE') {
+                                <span class="badge badge-pill badge-soft-warning font-size-12">MENUNGGU</span>
+                            `);
+                        } else if (cell == 'ACCEPT') {
                             return gridjs.html(`
-                  <span class="badge badge-pill badge-soft-warning font-size-12">IZIN</span>
-                `);
+                                <span class="badge badge-pill badge-soft-success font-size-12">DITERIMA</span>
+                            `);
+                        } else if (cell == 'REJECT') {
+                            return gridjs.html(`
+                                <span class="badge badge-pill badge-soft-danger font-size-12">DITOLAK</span>
+                            `);
                         } else {
                             return '-';
                         }
@@ -96,12 +104,51 @@
                     name: ". . .",
                     width: '100px',
                     formatter: (function(cell) {
-                        if (cell != "")
-                            return gridjs.html(`
-                  <div class="d-flex gap-3">
-                    <a href="/record/${cell}" type="button" class="btn btn-primary btn-sm btn-rounded">Detail</a>
-                  </div>`);
-                        else return "";
+                        console.log(cell)
+                        var ret = `
+                            <div class="d-flex gap-1">
+                                <a href="/record/user/${cell[0]}/{{ $selectedDay }}" data-bs-toggle="tooltip" data-bs-placement="top" title="Detail" class="text-primary">
+                                    <i class="mdi mdi-eye font-size-18"></i>
+                                </a>
+                        `
+
+                        if (cell[3] == "") {
+                            ret += `
+                                <a href="/record/user/${cell[0]}/{{ $selectedDay }}/leave" data-bs-toggle="tooltip" data-bs-placement="top" title="Izin" class="text-primary">
+                                    <i class="mdi mdi-file-document-edit font-size-18"></i>
+                                </a>
+                            `
+                        }
+
+                        if ("{{ date('Y-m-d') }}" == "{{ $selectedDay }}") {
+                            if (cell[1] == "") {
+                                ret += `
+                                <form action="/record/user/${cell[0]}/clock-in" method="POST" onsubmit="return confirm('Absen masuk akan dikirim?')">
+                                    @csrf
+                                    <button  data-bs-toggle="tooltip" data-bs-placement="top" title="Absen Masuk" class="text-success" type="submit" style="background-color: transparent; background-repeat: no-repeat; border: none; cursor: pointer; overflow: hidden; outline: none;">
+                                        <i class="mdi mdi-login font-size-18"></i>
+                                    </button>
+                                </form>
+                            `
+                            }
+
+                            if (cell[2] == "") {
+                                ret += `
+                                <form action="/record/user/${cell[0]}/clock-out" method="POST" onsubmit="return confirm('Absen pulang akan dikirim?')">
+                                    @csrf
+                                    <button  data-bs-toggle="tooltip" data-bs-placement="top" title="Absen Pulang" class="text-danger" type="submit" style="background-color: transparent; background-repeat: no-repeat; border: none; cursor: pointer; overflow: hidden; outline: none;">
+                                        <i class="mdi mdi-logout font-size-18"></i>
+                                    </button>
+                                </form>
+                            `
+                            }
+                        }
+
+                        ret += `
+                            </div>
+                        `
+
+                        return gridjs.html(ret)
                     })
                 },
             ],
@@ -111,11 +158,16 @@
                 @foreach ($users as $user)
                     ["{{ $user->image }}", "{{ $user->username }}", "{{ $user->name }}",
                         "{{ $user->gender == 'MALE' ? 'L' : 'P' }}",
-                        "{{ count($user->records) > 0 ? $user->records[0]->is_leave : '' }}",
-                        "{{ count($user->records) > 0 ? ($user->records[0]->is_leave ? $user->records[0]->leave->type : $user->records[0]->attend->clock_in_status) : '' }}",
-                        "{{ count($user->records) > 0 && $user->records[0]->attend ? $user->records[0]->attend->clock_in_time : '-' }}",
-                        "{{ count($user->records) > 0 && $user->records[0]->attend ? $user->records[0]->attend->clock_out_time : '-' }}",
-                        "{{ count($user->records) > 0 ? $user->records[0]->id : '' }}"
+                        "{{ count($user->records) > 0 ? ($user->records[0]->is_leave ? $user->records[0]->leave->type : '0') : '' }}",
+                        "{{ count($user->records) > 0 ? ($user->records[0]->is_leave ? $user->records[0]->leave->leave_status : $user->records[0]->attend->clock_in_status) : '' }}",
+                        "{{ count($user->records) > 0 && $user->records[0]->attend ? ($user->records[0]->attend->clock_in_time ? $user->records[0]->attend->clock_in_time : '-') : '-' }}",
+                        "{{ count($user->records) > 0 && $user->records[0]->attend ? ($user->records[0]->attend->clock_out_time ? $user->records[0]->attend->clock_out_time : '-') : '-' }}",
+                        [
+                            "{{ $user->id }}",
+                            "{{ count($user->records) == 0 ? null : ($user->records[0]->attend == null ? null : $user->records[0]->attend->clock_in_time) }}",
+                            "{{ count($user->records) == 0 ? null : ($user->records[0]->attend == null ? null : $user->records[0]->attend->clock_out_time) }}",
+                            "{{ count($user->records) == 0 ? null : ($user->records[0]->leave == null ? null : $user->records[0]->leave->type) }}",
+                        ]
                     ],
                 @endforeach
             ],
@@ -166,17 +218,7 @@
                         </div>
                     </div>
                     <div class="position-relative">
-                        <div class="modal-button mt-2">
-                            <div class="row align-items-start">
-                                <div class="col-sm-auto">
 
-                                </div>
-                                <div class="col-sm">
-
-                                </div>
-                            </div>
-                            <!-- end row -->
-                        </div>
                     </div>
 
                     <div id="table-data"></div>

@@ -28,6 +28,7 @@ class SchoolController extends Controller
             'lng' => 'required|numeric',
             'distance' => 'required|numeric',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'image_background' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ], [
             'name.required' => 'Nama tidak boleh kosong.',
             'name.max' => 'Nama maksimal 100 karakter.',
@@ -42,14 +43,23 @@ class SchoolController extends Controller
             'distance.required' => 'Jarak tidak boleh kosong.',
             'distance.numeric' => 'Jarak tidak valid.',
             'image.image' => 'Logo tidak valid.',
-            'image.mimes' => 'File bukan gambar.',
-            'image.max' => 'Logo maksimal 2 MB.'
+            'image.mimes' => 'Logo tidak valid.',
+            'image.max' => 'Logo maksimal 2 MB.',
+            'image_background.image' => 'Background tidak valid.',
+            'image_background.mimes' => 'Background tidak valid.',
+            'image_background.max' => 'Backgorund maksimal 2 MB.'
         ]);
 
         if ($request->image != null) {
             $imageName = uniqid() . time() . '.' . $request->image->extension();
             $request->image->move(public_path('images'), $imageName);
             $validateData['image'] = $imageName;
+        }
+
+        if ($request->image_background != null) {
+            $imageName = uniqid() . time() . '.' . $request->image_background->extension();
+            $request->image_background->move(public_path('images'), $imageName);
+            $validateData['image_background'] = $imageName;
         }
 
         School::create($validateData);
@@ -73,6 +83,7 @@ class SchoolController extends Controller
             'lng' => 'required|numeric',
             'distance' => 'required|numeric',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'image_background' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ], [
             'name.required' => 'Nama tidak boleh kosong.',
             'name.max' => 'Nama maksimal 100 karakter.',
@@ -87,14 +98,23 @@ class SchoolController extends Controller
             'distance.required' => 'Jarak tidak boleh kosong.',
             'distance.numeric' => 'Jarak tidak valid.',
             'image.image' => 'Logo tidak valid.',
-            'image.mimes' => 'File bukan gambar.',
-            'image.max' => 'Logo maksimal 2 MB.'
+            'image.mimes' => 'Logo tidak valid.',
+            'image.max' => 'Logo maksimal 2 MB.',
+            'image_background.image' => 'Background tidak valid.',
+            'image_background.mimes' => 'Background tidak valid.',
+            'image_background.max' => 'Backgorund maksimal 2 MB.'
         ]);
 
         if ($request->image != null) {
             $imageName = uniqid() . time() . '.' . $request->image->extension();
             $request->image->move(public_path('images'), $imageName);
             $validateData['image'] = $imageName;
+        }
+
+        if ($request->image_background != null) {
+            $imageName = uniqid() . time() . '.' . $request->image_background->extension();
+            $request->image_background->move(public_path('images'), $imageName);
+            $validateData['image_background'] = $imageName;
         }
 
         $school->update($validateData);
@@ -129,6 +149,7 @@ class SchoolController extends Controller
             'lng' => 'required|numeric',
             'distance' => 'required|numeric',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'image_background' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ], [
             'name.required' => 'Nama tidak boleh kosong.',
             'name.max' => 'Nama maksimal 100 karakter.',
@@ -143,14 +164,23 @@ class SchoolController extends Controller
             'distance.required' => 'Jarak tidak boleh kosong.',
             'distance.numeric' => 'Jarak tidak valid.',
             'image.image' => 'Logo tidak valid.',
-            'image.mimes' => 'File bukan gambar.',
-            'image.max' => 'Logo maksimal 2 MB.'
+            'image.mimes' => 'Logo tidak valid.',
+            'image.max' => 'Logo maksimal 2 MB.',
+            'image_background.image' => 'Background tidak valid.',
+            'image_background.mimes' => 'Background tidak valid.',
+            'image_background.max' => 'Backgorund maksimal 2 MB.'
         ]);
 
         if ($request->image != null) {
             $imageName = uniqid() . time() . '.' . $request->image->extension();
             $request->image->move(public_path('images'), $imageName);
             $validateData['image'] = $imageName;
+        }
+
+        if ($request->image_background != null) {
+            $imageName = uniqid() . time() . '.' . $request->image_background->extension();
+            $request->image_background->move(public_path('images'), $imageName);
+            $validateData['image_background'] = $imageName;
         }
 
         $school->update($validateData);
