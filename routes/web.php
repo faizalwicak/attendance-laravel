@@ -29,14 +29,19 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('landing');
-    // if (Auth::check()) {
-    //     if (Auth::user()->role == 'SUPERADMIN') {
-    //         return redirect('/school');
-    //     }
-    //     return redirect('/overview');
-    // }
+
+    if (Auth::check()) {
+        if (Auth::user()->role == 'SUPERADMIN') {
+            return redirect('/school');
+        }
+        return redirect('/overview');
+    }
+    return redirect('/landing');
     // return redirect('/login');
+});
+
+Route::get('/landing', function () {
+    return view('landing');
 });
 
 Route::get('/login', [LoginController::class, 'login'])->name('login');
