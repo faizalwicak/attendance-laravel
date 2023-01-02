@@ -25,9 +25,6 @@
 
     <!-- <body data-layout="horizontal"> -->
 
-    <div class="home-btn d-none d-sm-block">
-        <a href="index.html" class="text-white"><i class="fas fa-home h3 text-primary"></i></a>
-    </div>
 
     <div class="authentication-bg min-vh-100" style="background: url(/assets/images/bg-1.png);">
         <div class="bg-overlay bg-white"></div>
@@ -35,12 +32,6 @@
             <div class="row">
                 <div class="col-lg-12">
                     <div class="text-center">
-                        {{-- <a href="index.html" class="d-block auth-logo">
-                            <img src="/assets/images/logo-dark.png" alt="" height="36"
-                                class="auth-logo-dark mx-auto">
-                            <img src="/assets/images/logo-light.png" alt="" height="36"
-                                class="auth-logo-light mx-auto">
-                        </a> --}}
                         <div class="row justify-content-center mt-5">
                             <div class="col-sm-6">
                                 <div class="maintenance-img">
