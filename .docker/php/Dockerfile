@@ -38,6 +38,10 @@ RUN chown -R ${USER} /var/www
 # Select User
 USER ${USER}
 
+COPY --chown=${USER}:${GROUP} composer.json composer.lock ./
+
+RUN composer install
+
 # Copy permission to selected user
 COPY --chown=${USER}:${GROUP} . .
 
