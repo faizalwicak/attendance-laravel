@@ -38,7 +38,7 @@ RUN chown -R ${USER} /var/www
 # Select User
 USER ${USER}
 
-COPY --chown=${USER}:${GROUP} composer.json composer.lock ./
+COPY --chown=${USER}:${GROUP} composer.* ./
 
 RUN composer install
 
