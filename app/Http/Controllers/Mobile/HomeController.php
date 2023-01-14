@@ -110,7 +110,7 @@ class HomeController extends Controller
 
         $user->update($validateData);
 
-        return redirect('/mobile/password')
+        return redirect('/mobile/profile/password')
             ->with('success', 'Password berhasil disimpan.');
     }
 }
