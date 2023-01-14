@@ -115,12 +115,12 @@
             @csrf
 
             <div class="col-6">
-                <button class="btn btn-outline-primary w-100" formaction="{{ route('mobile.clock.in') }}">Presensi
+                <button class="btn btn-outline-primary w-100" formaction="/mobile/clock-in">Presensi
                     Masuk</button>
             </div>
 
             <div class="col-6">
-                <button class="btn btn-primary w-100" formaction="{{ route('mobile.clock.out') }}">Presensi
+                <button class="btn btn-primary w-100" formaction="/mobile/clock-out">Presensi
                     Pulang</button>
             </div>
         </form>

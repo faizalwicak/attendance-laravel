@@ -159,40 +159,6 @@
                             <span class="menu-item" data-key="t-record">Laporan Bulanan</span>
                         </a>
                     </li>
-                @elseif(auth()->user()->role == 'USER')
-                    <li>
-                        <a href="/overview">
-                            <i class="bx bxs-home icon nav-icon"></i>
-                            <span class="menu-item" data-key="t-home">Beranda</span>
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="/mobile/attend">
-                            <i class="bx bxs-report icon nav-icon"></i>
-                            <span class="menu-item" data-key="t-attend">Presensi</span>
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="/record/leave">
-                            <i class="bx bxs-report icon nav-icon"></i>
-                            <span class="menu-item" data-key="t-leave">Izin</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/record/month">
-                            <i class="bx bxs-report icon nav-icon"></i>
-                            <span class="menu-item" data-key="t-record">Daftar Teman</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{ route('mobile.notification') }}">
-                            <i class="bx bxs-report icon nav-icon"></i>
-                            <span class="menu-item" data-key="t-record">Notifikasi</span>
-                            <span class="badge rounded-pill bg-danger" data-key="t-hot">5</span>
-                        </a>
-                    </li>
                 @endif
 
             </ul>

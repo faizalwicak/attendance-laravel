@@ -5,7 +5,7 @@
     <div class="row px-3 py-3">
 
         <div class="col">
-            <form action="{{ route('mobile.profile.updatepassword') }}" method="POST">
+            <form action="/profile/password" method="POST">
                 @if ($errors->any())
                     @foreach ($errors->all() as $error)
                         <div class="alert alert-danger alert-border-left alert-dismissible fade show" role="alert">

@@ -100,7 +100,7 @@ class LeaveActionController extends Controller
             ]);
         }
 
-        return redirect()->route('mobile.home')
+        return redirect('/mobile/home')
             ->with('success', 'Izin berhasil disimpan.');
     }
 }

@@ -44,7 +44,7 @@
     </div>
     <div class="row px-3 pt-3 g-3">
         <div class="col-3">
-            <a href="{{ route('mobile.clock') }}">
+            <a href="/mobile/clock">
                 <div class="card card-menu">
                     <div class="card-body text-center p-2">
                         <p class="card-text">
@@ -57,7 +57,7 @@
             </a>
         </div>
         <div class="col-3">
-            <a href="{{ route('mobile.clock.history') }}">
+            <a href="/mobile/clock-history">
                 <div class="card card-menu">
                     <div class="card-body text-center p-2">
                         <p class="card-text">
@@ -70,7 +70,7 @@
             </a>
         </div>
         <div class="col-3">
-            <a href="{{ route('mobile.leave.create') }}">
+            <a href="/mobile/leave/create">
                 <div class="card card-menu">
                     <div class="card-body text-center p-2">
                         <p class="card-text">
@@ -83,7 +83,7 @@
             </a>
         </div>
         <div class="col-3">
-            <a href="{{ route('mobile.leave.list') }}">
+            <a href="/mobile/leave">
                 <div class="card card-menu">
                     <div class="card-body text-center p-2">
                         <p class="card-text">

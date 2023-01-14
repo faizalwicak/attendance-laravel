@@ -38,7 +38,7 @@ Route::get('/', function () {
             return redirect('/school');
         }
         if (auth()->user()->role == 'USER') {
-            return redirect()->route('mobile.home');
+            return redirect('/mobile/home');
         }
         return redirect('/overview');
     }
@@ -114,7 +114,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/profile', [HomeController::class, 'profile'])->name('profile');
         Route::get('/leave', [LeaveActionController::class, 'index'])->name('leave.list');
         Route::get('/leave/create', [LeaveActionController::class, 'create'])->name('leave.create');
-        Route::post('/leave/create', [LeaveActionController::class, 'store'])->name('leave.store');
+        Route::post('/leave', [LeaveActionController::class, 'store'])->name('leave.store');
 
         // Route::get('/attend', [ClockActionController::class, 'index'])->name('attend.list');
         // Route::get('/attend/create', [ClockActionController::class, 'create'])->name('attend.create');

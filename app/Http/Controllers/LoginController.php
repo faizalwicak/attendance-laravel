@@ -58,7 +58,7 @@ class LoginController extends Controller
 
                 Auth::login($user);
                 $user->update(['device_id' => Browser::userAgent()]);
-                return redirect()->route('mobile.home');
+                return redirect('/mobile/home');
             }
         }
 

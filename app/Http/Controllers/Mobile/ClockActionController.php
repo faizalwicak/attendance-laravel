@@ -152,7 +152,7 @@ class ClockActionController extends Controller
             $record->attend()->create($updateData);
         }
 
-        return redirect()->route('mobile.home')->with('success', $message);
+        return redirect('/mobile/home')->with('success', $message);
     }
 
     public function clockOut(Request $request)
@@ -204,6 +204,6 @@ class ClockActionController extends Controller
             ]);
         }
 
-        return redirect()->route('mobile.home')->with('success', $message);
+        return redirect('/mobile/home')->with('success', $message);
     }
 }

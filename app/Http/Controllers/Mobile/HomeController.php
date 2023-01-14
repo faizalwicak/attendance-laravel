@@ -78,7 +78,7 @@ class HomeController extends Controller
         $user->image = $imageName;
         $user->save();
 
-        return redirect()->route('mobile.profile')->with('success', 'Foto berhasil disimpan.');
+        return redirect('/mobile/profile')->with('success', 'Foto berhasil disimpan.');
     }
 
     public function password()
@@ -110,7 +110,7 @@ class HomeController extends Controller
 
         $user->update($validateData);
 
-        return redirect()->route('mobile.profile.password')
+        return redirect('/mobile/password')
             ->with('success', 'Password berhasil disimpan.');
     }
 }

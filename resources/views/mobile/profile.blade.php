@@ -17,8 +17,7 @@
             <div class="text-center pt-5">
                 <img src="/images/{{ auth()->user()->image }}" height="100px" width="100px" class="rounded-circle"
                     alt="img">
-                <form id="form-image" action="{{ @route('mobile.profile.updateimage') }}" method="POST"
-                    enctype="multipart/form-data">
+                <form id="form-image" action="/mobile/profile/image" method="POST" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
                     <input id="input-image" type="file" style="display: none;" name="image">
@@ -45,7 +44,7 @@
             </div>
 
             <div class="pt-3">
-                <a href="{{ @route('mobile.profile.password') }}" class="btn btn-outline-primary w-100" type="button">
+                <a href="/mobile/profile/password" class="btn btn-outline-primary w-100" type="button">
                     Ganti Password
                 </a>
             </div>

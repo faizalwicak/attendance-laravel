@@ -21,7 +21,7 @@
     @include('mobile.layouts.navbar')
     <div class="row px-3 py-3">
         <div class="col">
-            <form action="{{ route('mobile.leave.store') }}" method="POST" enctype="multipart/form-data">
+            <form action="/mobile/leave" method="POST" enctype="multipart/form-data">
                 @if ($errors->any())
                     @foreach ($errors->all() as $error)
                         <div class="alert alert-danger alert-border-left alert-dismissible fade show" role="alert">
