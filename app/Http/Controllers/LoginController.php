@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
+use hisorange\BrowserDetect\Parser as Browser;
 
 class LoginController extends Controller
 {
@@ -32,12 +33,33 @@ class LoginController extends Controller
 
         $user = User::where('username', $validateData['username'])->first();
 
-        if ($user && Hash::check($validateData['password'], $user->password) && in_array($user->role, ['SUPERADMIN', 'ADMIN', 'OPERATOR'])) {
-            Auth::login($user);
-            if ($user->role == 'SUPERADMIN') {
-                return redirect('/school');
+        if (
+            $user
+            && Hash::check($validateData['password'], $user->password)
+        ) {
+            if (in_array($user->role, ['SUPERADMIN', 'ADMIN', 'OPERATOR'])) {
+                Auth::login($user);
+                if ($user->role == 'SUPERADMIN') {
+                    return redirect('/school');
+                }
+
+                return redirect('/overview');
             }
-            return redirect('/overview');
+            if ($user->role == 'USER') {
+                // if (!Browser::isMobile()) {
+                //     Session::flash('error', 'User hanya bisa login dari ponsel.');
+                //     return redirect('login')->withInput();
+                // }
+
+                if ($user->device_id != null && $user->device_id != Browser::userAgent()) {
+                    Session::flash('error', 'Akun sudah login di perangkat lain, silahkan hubungi admin.');
+                    return redirect('login')->withInput();
+                }
+
+                Auth::login($user);
+                $user->update(['device_id' => Browser::userAgent()]);
+                return redirect()->route('mobile.home');
+            }
         }
 
         Session::flash('error', 'Username atau Password Salah.');
