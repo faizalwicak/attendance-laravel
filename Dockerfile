@@ -38,9 +38,9 @@ RUN chown -R ${USER} /var/www
 # Select User
 USER ${USER}
 
-COPY --chown=${USER}:${GROUP} ./composer.* ./
+# COPY --chown=${USER}:${GROUP} ./composer.* ./
 
-RUN composer install
+# RUN composer install
 
 # Copy permission to selected user
 COPY --chown=${USER}:${GROUP} . .
