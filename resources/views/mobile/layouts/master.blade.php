@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ $title }} | Presensi Digital</title>
+    <title>{{ $title }} | {{ auth()->user()->school->name }}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
 
@@ -13,15 +13,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap"
         rel="stylesheet">
 
-    {{-- <style>
-        html {
-            min-height: 100vh;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
+    <style>
         body {
-            min-height: 100vh;
             font-family: 'Inter',
                 sans-serif;
         }
@@ -45,7 +38,7 @@
             padding: 0;
             margin: 0;
         }
-    </style> --}}
+    </style>
 
     @yield('style')
 </head>
