@@ -6,16 +6,53 @@ use App\Models\Record;
 use App\Models\School;
 use App\Models\User;
 use DateTime;
+use Illuminate\Http\Request;
 
 class ClockController extends Controller
 {
-    public function clockIn($user_id)
+
+    public function clockInView($user_id)
     {
         $user = User::where('id', $user_id)->first();
 
         if ($user == null) {
             return back()->with('error', 'Siswa tidak ditemukan.');
         }
+        return view('record-clock', [
+            'title' => 'Presensi Masuk',
+            'user' => $user, 'selectedDay' => date('Y-m-d'),
+            'selectedTime' => date('H:i'),
+        ]);
+    }
+
+    public function clockOutView($user_id)
+    {
+        $user = User::where('id', $user_id)->first();
+
+        if ($user == null) {
+            return back()->with('error', 'Siswa tidak ditemukan.');
+        }
+        return view('record-clock', [
+            'title' => 'Presensi Pulang',
+            'user' => $user, 'selectedDay' => date('Y-m-d'),
+            'selectedTime' => date('H:i'),
+        ]);
+    }
+
+    public function clockIn(Request $request, $user_id)
+    {
+        $user = User::where('id', $user_id)->first();
+
+        if ($user == null) {
+            return back()->with('error', 'Siswa tidak ditemukan.');
+        }
+
+        $validateData = $request->validate([
+            'time' => 'required|date_format:H:i',
+        ], [
+            'time.required' => 'Waktu tidak boleh kosong.',
+            'time.date_format' => 'Format waktu tidak valid.',
+        ]);
 
         if (auth()->user()->role == 'ADMIN') {
         } else {
@@ -32,6 +69,8 @@ class ClockController extends Controller
         }
 
         $nowDate = new DateTime();
+        $timeStrArr = explode(":", $validateData['time']);
+        $nowDate->setTime((int)$timeStrArr[0], (int)$timeStrArr[0]);
 
         $record = Record::where('date', $nowDate->format('Y-m-d'))
             ->with('attend')
@@ -79,16 +118,23 @@ class ClockController extends Controller
             $record->attend()->create($updateData);
         }
 
-        return back()->with('success', $message);
+        return redirect('/record/day?grade=' . $user->grade_id . '&day=' . $nowDate->format('Y-m-d'))->with('success', $message);
     }
 
-    public function clockOut($user_id)
+    public function clockOut(Request $request, $user_id)
     {
         $user = User::where('id', $user_id)->first();
 
         if ($user == null) {
             return back()->with('error', 'Siswa tidak ditemukan.');
         }
+
+        $validateData = $request->validate([
+            'time' => 'required|date_format:H:i',
+        ], [
+            'time.required' => 'Waktu tidak boleh kosong.',
+            'time.date_format' => 'Format waktu tidak valid.',
+        ]);
 
         if (auth()->user()->role == 'ADMIN') {
         } else {
@@ -105,6 +151,8 @@ class ClockController extends Controller
         }
 
         $nowDate = new DateTime();
+        $timeStrArr = explode(":", $validateData['time']);
+        $nowDate->setTime((int)$timeStrArr[0], (int)$timeStrArr[0]);
 
         $record = Record::where('date', $nowDate->format('Y-m-d'))
             ->where('user_id', $user_id)
@@ -112,13 +160,6 @@ class ClockController extends Controller
             ->first();
 
         $message = "Presensi berhasil.";
-
-        // $limitTime = '24:00:00';
-        // $nowTime = strtotime($nowDate->format('H:i:s'));
-
-        // if ($nowTime > strtotime($limitTime)) {
-        //     return back()->with('error', 'Anda bisa absensi sebelum jam ' . $limitTime . '.');
-        // }
 
         if ($record) {
             $record = $record->attend()->update([
@@ -136,6 +177,6 @@ class ClockController extends Controller
             ]);
         }
 
-        return back()->with('success', $message);
+        return redirect('/record/day?grade=' . $user->grade_id . '&day=' . $nowDate->format('Y-m-d'))->with('success', $message);
     }
 }

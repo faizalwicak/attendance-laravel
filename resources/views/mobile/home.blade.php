@@ -38,8 +38,13 @@
             <p>{{ auth()->user()->grade->name }}</p>
         </div>
         <div class="col-auto">
-            <img src="/images/{{ auth()->user()->image }}" height="80px" width="80px" class="rounded-circle"
-                alt="img">
+            @if (auth()->user()->image != null)
+                <img src="/images/{{ auth()->user()->image }}" height="80px" width="80px" class="rounded-circle"
+                    alt="image">
+            @else
+                <img src="/assets/images/default-user.png" alt="image" height="80px" width="80px"
+                    class="rounded-circle" />
+            @endif
         </div>
     </div>
     <div class="row px-3 pt-3 g-3">

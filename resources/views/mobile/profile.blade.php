@@ -15,8 +15,13 @@
         <div class="col-12">
 
             <div class="text-center pt-5">
-                <img src="/images/{{ auth()->user()->image }}" height="100px" width="100px" class="rounded-circle"
-                    alt="img">
+                @if (auth()->user()->image != null)
+                    <img src="/images/{{ auth()->user()->image }}" height="100px" width="100px" class="rounded-circle"
+                        alt="image">
+                @else
+                    <img src="/assets/images/default-user.png" alt="image" height="100px" width="100px"
+                        class="rounded-circle" />
+                @endif
                 <form id="form-image" action="/mobile/profile/image" method="POST" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')

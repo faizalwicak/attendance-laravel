@@ -123,24 +123,38 @@
                         if ("{{ date('Y-m-d') }}" == "{{ $selectedDay }}") {
                             if (cell[1] == "") {
                                 ret += `
-                                <form action="/record/user/${cell[0]}/clock-in" method="POST" onsubmit="return confirm('Absen masuk akan dikirim?')">
-                                    @csrf
-                                    <button  data-bs-toggle="tooltip" data-bs-placement="top" title="Absen Masuk" class="text-success" type="submit" style="background-color: transparent; background-repeat: no-repeat; border: none; cursor: pointer; overflow: hidden; outline: none;">
-                                        <i class="mdi mdi-login font-size-18"></i>
-                                    </button>
-                                </form>
-                            `
+                                    <a  href="/record/user/${cell[0]}/clock-in" 
+                                        type="button" 
+                                        data-bs-toggle="tooltip" 
+                                        data-bs-placement="top" 
+                                        title="Absen Masuk" 
+                                        class="text-success" 
+                                        style="background-color: transparent; background-repeat: no-repeat; border: none; cursor: pointer; overflow: hidden; outline: none;">
+                                    <i class="mdi mdi-login font-size-18"></i>
+                                    </a>
+                                `
                             }
 
                             if (cell[2] == "") {
                                 ret += `
-                                <form action="/record/user/${cell[0]}/clock-out" method="POST" onsubmit="return confirm('Absen pulang akan dikirim?')">
-                                    @csrf
-                                    <button  data-bs-toggle="tooltip" data-bs-placement="top" title="Absen Pulang" class="text-danger" type="submit" style="background-color: transparent; background-repeat: no-repeat; border: none; cursor: pointer; overflow: hidden; outline: none;">
-                                        <i class="mdi mdi-logout font-size-18"></i>
-                                    </button>
-                                </form>
-                            `
+                                    <a href="/record/user/${cell[0]}/clock-out" 
+                                        type="button" 
+                                        data-bs-toggle="tooltip" 
+                                        data-bs-placement="top" 
+                                        title="Absen Pulang" 
+                                        class="text-danger" 
+                                        style="background-color: transparent; background-repeat: no-repeat; border: none; cursor: pointer; overflow: hidden; outline: none;">
+                                    <i class="mdi mdi-logout font-size-18"></i>
+                                    </a>
+                                `
+                                //ret += `
+                            //<form action="/record/user/${cell[0]}/clock-out" method="POST" onsubmit="return confirm('Absen pulang akan dikirim?')">
+                            //    @csrf
+                            //    <button  data-bs-toggle="tooltip" data-bs-placement="top" title="Absen Pulang" class="text-danger" type="submit" style="background-color: transparent; background-repeat: no-repeat; border: none; cursor: pointer; overflow: hidden; outline: none;">
+                            //        <i class="mdi mdi-logout font-size-18"></i>
+                            //    </button>
+                            //</form>
+                            //`
                             }
                         }
 

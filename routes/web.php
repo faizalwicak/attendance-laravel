@@ -85,7 +85,9 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/record/export', [RecordController::class, 'recordMonthExport']);
 
         // detail record by user
+        Route::get('/record/user/{user_id}/clock-in', [ClockController::class, 'clockInView']);
         Route::post('/record/user/{user_id}/clock-in', [ClockController::class, 'clockIn']);
+        Route::get('/record/user/{user_id}/clock-out', [ClockController::class, 'clockOutView']);
         Route::post('/record/user/{user_id}/clock-out', [ClockController::class, 'clockOut']);
 
         Route::get('/record/user/{user_id}/{day}', [RecordController::class, 'detailByQuery']);
