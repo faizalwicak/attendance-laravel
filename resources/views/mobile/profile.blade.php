@@ -63,7 +63,6 @@
 @section('script')
     <script>
         document.getElementById("input-image").onchange = function() {
-            console.log('suubmit')
             document.getElementById("form-image").submit();
         };
         document.getElementById('button-image').onclick = function() {

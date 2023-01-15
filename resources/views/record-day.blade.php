@@ -104,7 +104,6 @@
                     name: ". . .",
                     width: '100px',
                     formatter: (function(cell) {
-                        console.log(cell)
                         var ret = `
                             <div class="d-flex gap-1">
                                 <a href="/record/user/${cell[0]}/{{ $selectedDay }}" data-bs-toggle="tooltip" data-bs-placement="top" title="Detail" class="text-primary">

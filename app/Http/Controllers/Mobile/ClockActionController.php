@@ -71,7 +71,6 @@ class ClockActionController extends Controller
             $record_array[(int)date('d', $value_date) - 1] = $value;
         }
 
-        debugbar()->info($record_array);
         return view('mobile.clock-list', ['title' => 'Riwayat Presensi', 'selectedMonth' => $month, 'selectedYear' => $year, 'records' => $record_array,]);
     }
 

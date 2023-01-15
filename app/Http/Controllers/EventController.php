@@ -21,8 +21,6 @@ class EventController extends Controller
         $year = date('Y', $selectedMonthDate);
         $month = date('n', $selectedMonthDate);
 
-        debugbar()->info(date('n', $month));
-
         $events = Event::where('school_id', auth()->user()->school_id)
             ->whereYear('date', $year)
             ->whereMonth('date', $month)
