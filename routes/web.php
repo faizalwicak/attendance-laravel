@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\BackupController;
 use App\Http\Controllers\ClockController;
 use App\Http\Controllers\LeaveController;
 use App\Http\Controllers\NotificationController;
@@ -59,6 +60,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::resource('/admin', AdminController::class);
         Route::get('/admin/{id}/access', [AdminController::class, 'operatorAccess']);
         Route::put('/admin/{id}/access', [AdminController::class, 'operatorAccessAction']);
+        Route::get('/backup', [BackupController::class, 'index']);
     });
 
     Route::group(['middleware' => ['role:ADMIN']], function () {

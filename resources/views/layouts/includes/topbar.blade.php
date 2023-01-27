@@ -61,6 +61,12 @@
                             class="mdi mdi-key-outline text-muted font-size-16 align-middle me-2"></i> <span
                             class="align-middle">Ganti Password</span></a>
                     <div class="dropdown-divider"></div>
+                    @if (in_array(auth()->user()->role, ['ADMIN', 'SUPERADMIN']))
+                        <a class="dropdown-item" href="/backup""><i
+                                class="mdi mdi-database text-muted font-size-16 align-middle me-2"></i> <span
+                                class="align-middle">Backup DB</span></a>
+                        <div class="dropdown-divider"></div>
+                    @endif
                     <a class="dropdown-item" href="/logout"><i
                             class="mdi mdi-logout text-muted font-size-16 align-middle me-2"></i> <span
                             class="align-middle">Logout</span></a>
