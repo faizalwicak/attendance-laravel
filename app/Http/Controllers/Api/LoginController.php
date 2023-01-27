@@ -35,11 +35,11 @@ class LoginController extends Controller
             return response()->json(['message' => 'User sudah login di perangkat lain.'], 422);
         }
 
-        $userDevice = User::where('device_id', $data['device_id'])->first();
+        // $userDevice = User::where('device_id', $data['device_id'])->first();
 
-        if ($userDevice != null && $userDevice->id != $user->id) {
-            return response()->json(['message' => 'Perangkat sudah digunakan oleh user lain.'], 422);
-        }
+        // if ($userDevice != null && $userDevice->id != $user->id) {
+        //     return response()->json(['message' => 'Perangkat sudah digunakan oleh user lain.'], 422);
+        // }
 
         if (!Hash::check($data['password'], $user->password)) {
             return response()->json(['message' => 'Password salah.'], 422);
