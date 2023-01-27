@@ -40,6 +40,8 @@
                             Kelas 11</option>
                         <option value="12" {{ old('grade', $grade ? $grade->grade : '') == '12' ? 'selected' : '' }}>
                             Kelas 12</option>
+                        <option value="0" {{ old('grade', $grade ? $grade->grade : '') == '0' ? 'selected' : '' }}>
+                            GTK</option>
                     </select>
                 </div>
 

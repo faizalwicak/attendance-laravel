@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Grade;
 use Illuminate\Http\Request;
-use Barryvdh\Debugbar\Facades\Debugbar;
 use Illuminate\Support\Facades\Auth;
 
 class GradeController extends Controller
@@ -27,7 +26,7 @@ class GradeController extends Controller
     {
         $requestData = $request->validate([
             'name' => 'required|max:100',
-            'grade' => 'required|numeric|in:10,11,12'
+            'grade' => 'required|numeric|in:10,11,12,0'
         ], [
             'name.required' => 'Nama tidak boleh kosong.',
             'name.max' => 'Nama maksimal 100 karakter.',
@@ -58,7 +57,7 @@ class GradeController extends Controller
         }
         $requestData = $request->validate([
             'name' => 'required|max:100',
-            'grade' => 'required|numeric|in:10,11,12'
+            'grade' => 'required|numeric|in:10,11,12,0'
         ], [
             'name.required' => 'Nama tidak boleh kosong.',
             'name.max' => 'Nama maksimal 100 karakter.',
