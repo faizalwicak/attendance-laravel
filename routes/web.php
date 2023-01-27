@@ -64,10 +64,10 @@ Route::group(['middleware' => ['auth']], function () {
     Route::group(['middleware' => ['role:ADMIN']], function () {
         Route::resource('/grade', GradeController::class);
 
-        Route::resource('/student', StudentController::class);
         Route::post('/student/{id}/reset-device', [StudentController::class, 'resetDevice']);
         Route::get('/student/import', [StudentController::class, 'importStudent']);
         Route::post('/student/importAction', [StudentController::class, 'importStudentAction']);
+        Route::resource('/student', StudentController::class);
 
         Route::resource('/quote', QuoteController::class);
 
