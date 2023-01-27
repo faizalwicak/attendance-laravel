@@ -41,7 +41,7 @@ class AdminController extends Controller
             'username' => 'required|max:100|unique:users,username',
             'name' => 'required|max:100',
             'email' => 'required|email|unique:users,email',
-            'password' => 'required|min:6',
+            'password' => 'required|min:5',
             're-password' => 'required|same:password',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ];
@@ -128,7 +128,7 @@ class AdminController extends Controller
             'username' => 'required|max:100|unique:users,username,' . $user->id,
             'name' => 'required|max:100',
             'email' => 'required|email|unique:users,email,' . $user->id,
-            'password' => 'nullable|min:6',
+            'password' => 'nullable|min:5',
             're-password' => 'same:password',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ];

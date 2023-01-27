@@ -64,7 +64,7 @@ class LoginController extends Controller
                     $fail('Password lama salah.');
                 }
             },],
-            'password' => 'required|min:6',
+            'password' => 'required|min:5',
             're-password' => 'required|same:password',
         ], [
             'old-password.required' => 'Password lama tidak boleh kosong.',
