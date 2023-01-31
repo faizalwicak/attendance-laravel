@@ -70,7 +70,7 @@ class ClockController extends Controller
 
         $nowDate = new DateTime();
         $timeStrArr = explode(":", $validateData['time']);
-        $nowDate->setTime((int)$timeStrArr[0], (int)$timeStrArr[0]);
+        $nowDate->setTime((int)$timeStrArr[0], (int)$timeStrArr[1]);
 
         $record = Record::where('date', $nowDate->format('Y-m-d'))
             ->with('attend')
@@ -152,7 +152,7 @@ class ClockController extends Controller
 
         $nowDate = new DateTime();
         $timeStrArr = explode(":", $validateData['time']);
-        $nowDate->setTime((int)$timeStrArr[0], (int)$timeStrArr[0]);
+        $nowDate->setTime((int)$timeStrArr[0], (int)$timeStrArr[1]);
 
         $record = Record::where('date', $nowDate->format('Y-m-d'))
             ->where('user_id', $user_id)

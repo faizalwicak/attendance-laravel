@@ -116,10 +116,10 @@ class RecordController extends Controller
                 } else {
                     if ($r->attend->clock_in_status == "ON_TIME") {
                         $onTime++;
-                        $status = 'TW';
+                        $status = 'TW (' . date('H:i', strtotime($r->attend->clock_in_time)) . ')';
                     } else {
                         $late++;
-                        $status = 'TL';
+                        $status = 'TL (' . date('H:i', strtotime($r->attend->clock_in_time)) . ')';
                     }
                     $attend += 1;
                 }

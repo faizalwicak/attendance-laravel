@@ -143,7 +143,6 @@ class ClockController extends Controller
             ->first();
 
         $school = School::find(auth()->user()->school_id)->first();
-        $status = null;
         $message = "Presensi berhasil.";
 
         $distance = $this->haversineGreatCircleDistance($school->lat, $school->lng, $data['lat'], $data['lng']);
@@ -151,9 +150,16 @@ class ClockController extends Controller
             return response()->json(['message' => 'Anda berada di luar area sekolah.'], 422);
         }
 
-        $limitTime = '22:00:00';
         $nowTime = strtotime($nowDate->format('H:i:s'));
 
+        // setelah jam 12:00
+        $limitTime = '12:00:00';
+        if ($nowTime < strtotime($limitTime)) {
+            return response()->json(['message' => 'Anda bisa absensi setelah jam ' . $limitTime . '.'], 422);
+        }
+
+        // sebelum jam 23:00
+        $limitTime = '23:00:00';
         if ($nowTime > strtotime($limitTime)) {
             return response()->json(['message' => 'Anda bisa absensi sebelum jam ' . $limitTime . '.'], 422);
         }
