@@ -7,6 +7,20 @@
     <!-- datepicker css -->
     <link rel="stylesheet" href="/assets/libs/flatpickr/flatpickr.min.css">
     <link rel="stylesheet" href="/assets/libs/flatpickr/plugins/monthSelect/style.css">
+
+    <style>
+        .item {
+            color: black;
+        }
+
+        .item.late {
+            color: red;
+        }
+
+        .item.ontime {
+            color: green;
+        }
+    </style>
 @endsection
 
 @section('script')
@@ -52,10 +66,21 @@
                         name: '{{ explode('-', $d)[2] }}',
                         width: '100px',
                         formatter: function(cell) {
-                            return gridjs.html(`
-                                <a href="/record/user/${cell[0]}/${cell[1]}">${cell[2]}</a>
-                            `);
+                            if (cell[2].includes('TL')) {
+                                return gridjs.html(`
+                                    <a class="item late" href="/record/user/${cell[0]}/${cell[1]}">${cell[2]}</a>
+                                `);
+                            }
 
+                            if (cell[2].includes('TW')) {
+                                return gridjs.html(`
+                                    <a class="item ontime" href="/record/user/${cell[0]}/${cell[1]}">${cell[2]}</a>
+                                `);
+                            }
+
+                            return gridjs.html(`
+                                <a class="item" href="/record/user/${cell[0]}/${cell[1]}">${cell[2]}</a>
+                            `);
                         }
                     },
                 @endforeach {

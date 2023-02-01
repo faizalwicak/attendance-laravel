@@ -21,7 +21,17 @@
             <tr>
                 @foreach ($record as $r)
                     @if ($loop->index > 0)
-                        <td>{{ $r }}</td>
+                        @if ($loop->index > 3 && $loop->index <= count($days) + 3)
+                            @if (str_contains($r, 'TW'))
+                                <td style="color: green;">{{ $r }}</td>
+                            @elseif(str_contains($r, 'TL'))
+                                <td style="color: red;">{{ $r }}</td>
+                            @else
+                                <td>{{ $r }}</td>
+                            @endif
+                        @else
+                            <td>{{ $r }}</td>
+                        @endif
                     @endif
                 @endforeach
             </tr>
