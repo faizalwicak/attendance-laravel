@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Mobile;
 
 use App\Http\Controllers\Controller;
+use App\Models\Quote;
 use App\Models\Record;
 use App\Models\School;
 use DateTime;
@@ -126,6 +127,11 @@ class ClockActionController extends Controller
         } else {
             $status = 'LATE';
             $message = "Presensi berhasil. Anda terlambat masuk.";
+        }
+
+        $quote = Quote::where('school_id', auth()->user()->school_id)->where('active', 1)->first();
+        if ($quote != null) {
+            $message = $message . ' - ' . $quote->message;
         }
 
         $updateData = [
