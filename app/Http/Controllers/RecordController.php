@@ -105,7 +105,7 @@ class RecordController extends Controller
             foreach ($u->records as $r) {
                 $index = array_search($r->date, $dateString);
                 $status = 'A';
-                if ($r->is_leave) {
+                if ($r->is_leave && $r->leave) {
                     if ($r->leave->type == 'SICK' && $r->leave->leave_status == 'ACCEPT') {
                         $sick += 1;
                         $status = 'S';
@@ -113,7 +113,7 @@ class RecordController extends Controller
                         $leave += 1;
                         $status = 'I';
                     }
-                } else {
+                } else if ($r->attend) {
                     if ($r->attend->clock_in_status == "ON_TIME") {
                         $onTime++;
                         $status = 'TW (' . date('H:i', strtotime($r->attend->clock_in_time)) . ')';
