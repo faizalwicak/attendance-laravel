@@ -49,7 +49,7 @@
                         </div>
                     </div>
                 @endif
-            @elseif ($record->is_leave)
+            @elseif ($record->is_leave && $record->leave)
                 <div class="row">
                     <div class="col-md-6">
                         <div class="mb-3">
