@@ -172,7 +172,7 @@
                     ["{{ $user->image }}", "{{ $user->username }}", "{{ $user->name }}",
                         "{{ $user->gender == 'MALE' ? 'L' : 'P' }}",
                         "{{ count($user->records) > 0 ? ($user->records[0]->is_leave && $user->records[0]->leave ? $user->records[0]->leave->type : '0') : '' }}",
-                        "{{ count($user->records) > 0 ? ($user->records[0]->is_leave && $user->records[0]->leave ? $user->records[0]->leave->leave_status : $user->records[0]->attend->clock_in_status) : '' }}",
+                        "{{ count($user->records) > 0 ? ($user->records[0]->is_leave && $user->records[0]->leave ? $user->records[0]->leave->leave_status : ($user->records[0]->attend ? $user->records[0]->attend->clock_in_status : '')) : '' }}",
                         "{{ count($user->records) > 0 && $user->records[0]->attend ? ($user->records[0]->attend->clock_in_time ? $user->records[0]->attend->clock_in_time : '-') : '-' }}",
                         "{{ count($user->records) > 0 && $user->records[0]->attend ? ($user->records[0]->attend->clock_out_time ? $user->records[0]->attend->clock_out_time : '-') : '-' }}",
                         [
