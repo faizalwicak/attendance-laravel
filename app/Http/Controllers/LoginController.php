@@ -51,10 +51,10 @@ class LoginController extends Controller
                 //     return redirect('login')->withInput();
                 // }
 
-                if ($user->device_id != null && $user->device_id != Browser::userAgent()) {
-                    Session::flash('error', 'Akun sudah login di perangkat lain, silahkan hubungi admin.');
-                    return redirect('login')->withInput();
-                }
+                // if ($user->device_id != null && $user->device_id != Browser::userAgent()) {
+                //     Session::flash('error', 'Akun sudah login di perangkat lain, silahkan hubungi admin.');
+                //     return redirect('login')->withInput();
+                // }
 
                 Auth::login($user);
                 $user->update(['device_id' => Browser::userAgent()]);
