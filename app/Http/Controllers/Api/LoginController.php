@@ -31,9 +31,9 @@ class LoginController extends Controller
             return response()->json(['message' => 'User tidak ditemukan.'], 422);
         }
 
-        if ($user->device_id != null && $user->device_id != "" && $user->device_id != $data['device_id']) {
-            return response()->json(['message' => 'User sudah login di perangkat lain.'], 422);
-        }
+        // if ($user->device_id != null && $user->device_id != "" && $user->device_id != $data['device_id']) {
+        //     return response()->json(['message' => 'User sudah login di perangkat lain.'], 422);
+        // }
 
         // $userDevice = User::where('device_id', $data['device_id'])->first();
 
