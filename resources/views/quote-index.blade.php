@@ -52,7 +52,7 @@ new gridjs.Grid({
     search: true,
     data: [
         @foreach($quotes as $quote)
-        ["{{ $quote->message }}", "{{ $quote->active }}", "{{ $quote->id }}"],
+        [`{!! $quote->message !!}`, "{{ $quote->active }}", "{{ $quote->id }}"],
         @endforeach
     ]
 }).render(document.getElementById("table-data"));
